@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -15,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class GameActivity extends Activity {
+public class GameActivity extends ActionBarActivity {
 
     ImageButton[] button_Cards;
     HashMap<Equation.EquationOperatorType, Button> button_Operators
@@ -24,7 +28,7 @@ public class GameActivity extends Activity {
     TextView textView_Equation;
 
     Button button_BackSpace;
-    Button button_Restart;
+//    Button button_Restart;
 
     ArrayList<Equation.EquationNode> currentInputBuffer = new ArrayList<Equation.EquationNode>();
 
@@ -68,15 +72,63 @@ public class GameActivity extends Activity {
         }
 
         textView_Equation = (TextView) findViewById(R.id.text_game_equation);
-        button_BackSpace = (Button) findViewById(R.id.button_game_backspace);
-        button_Restart = (Button) findViewById(R.id.button_game_restart);
 
-        button_Restart.setOnClickListener(new View.OnClickListener() {
+        // Backspace button
+        button_BackSpace = (Button) findViewById(R.id.button_game_backspace);
+        button_BackSpace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                restart();
+                Equation.EquationNode node = currentInputBuffer.get(currentInputBuffer.size() - 1);
+                currentInputBuffer.remove(currentInputBuffer.size() - 1);
+
+                if (currentInputBuffer.isEmpty()) {
+                    view.setEnabled(false);
+                }
+
+                if (node instanceof Equation.EquationIntegerOperand) {
+                    // Is a card
+                    Equation.EquationIntegerOperand num = (Equation.EquationIntegerOperand) node;
+
+                    for (int i = 0; i < showingCards.size(); ++i) {
+                        if (showingCards.get(i).getNumber() == num.getData()) {
+                            button_Cards[i].setEnabled(true);
+                            break;
+                        }
+                    }
+                } else {
+
+                }
+
+                refreshEquationView();
             }
         });
+        button_BackSpace.setLongClickable(true);
+        button_BackSpace.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (currentInputBuffer.isEmpty()) {
+                    return false;
+                }
+
+                currentInputBuffer.clear();
+
+                for (ImageButton b : button_Cards) {
+                    b.setEnabled(true);
+                }
+
+                refreshEquationView();
+                view.setEnabled(false);
+                return true;
+            }
+        });
+
+//        button_Restart = (Button) findViewById(R.id.button_game_restart);
+//        button_Restart.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                restart();
+//            }
+//        });
 
         restart();
 	}
@@ -103,6 +155,7 @@ public class GameActivity extends Activity {
 
         textView_Equation.setText("");
         currentInputBuffer.clear();
+        button_BackSpace.setEnabled(false);
     }
 
     private void refreshEquationView() {
@@ -138,6 +191,22 @@ public class GameActivity extends Activity {
         exitAlertBuilder.create().show();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_game, menu);
+
+        MenuItem item_Refresh = menu.findItem(R.id.menu_game_refresh);
+        item_Refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                restart();
+                return true;
+            }
+        });
+
+        super.onCreateOptionsMenu(menu);
+        return true;
+    }
 
     class CardsOperatorClickListener implements View.OnClickListener {
 
@@ -218,6 +287,9 @@ public class GameActivity extends Activity {
                                     Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_RIGHT_BRACKET));
                     break;
             }
+
+            // Enable the button
+            button_BackSpace.setEnabled(true);
 
             refreshEquationView();
         }

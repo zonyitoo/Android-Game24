@@ -10,7 +10,7 @@ This project is created by AndroidStudio and built with Gradle, but it can also 
 
 ### Build with Gradle
 
-If you have installed Gradle and a unix-like environment (Mac OS X, Linux, FreeBSD, Cygwin), just `cd` into the root directory of the project and run
+If you have installed Gradle and have a unix-like environment (Mac OS X, Linux, FreeBSD, Cygwin), just `cd` into the root directory of the project and run
 
 ```sh
 ./gradlew build

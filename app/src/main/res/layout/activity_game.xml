@@ -2,13 +2,19 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#006600">
 
-    <Button
-        android:id="@+id/button_game_restart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Restart"/>
+    <!--<Button-->
+        <!--android:id="@+id/button_game_restart"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Restart"/>-->
+
+    <!--
+    Pocker cards, I have to hardcode the cards' position for animating.
+
+     -->
 
     <LinearLayout
         android:id="@+id/layout_game_card_area"
@@ -56,58 +62,6 @@
         </android.support.v7.widget.GridLayout>
 
     </LinearLayout>
-
-    <!--<LinearLayout-->
-        <!--android:id="@+id/layout_game_card_area"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:gravity="center"-->
-        <!--android:orientation="vertical"-->
-        <!--android:layout_marginBottom="40dp"-->
-        <!--android:layout_centerInParent="true">-->
-
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:gravity="center">-->
-
-            <!--<ImageButton-->
-                <!--android:id="@+id/button_game_card_1"-->
-                <!--android:layout_width="100dp"-->
-                <!--android:layout_height="100dp"-->
-                <!--android:src="@drawable/bordered_c_10"-->
-                <!--android:scaleType="centerInside"/>-->
-
-            <!--<ImageButton-->
-                <!--android:id="@+id/button_game_card_2"-->
-                <!--android:layout_width="100dp"-->
-                <!--android:layout_height="100dp"-->
-                <!--android:src="@drawable/bordered_c_10"-->
-                <!--android:scaleType="centerInside"/>-->
-        <!--</LinearLayout>-->
-
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:gravity="center">-->
-
-            <!--<ImageButton-->
-                <!--android:id="@+id/button_game_card_3"-->
-                <!--android:layout_width="100dp"-->
-                <!--android:layout_height="100dp"-->
-                <!--android:src="@drawable/bordered_c_10"-->
-                <!--android:scaleType="centerInside"/>-->
-
-            <!--<ImageButton-->
-                <!--android:id="@+id/button_game_card_4"-->
-                <!--android:layout_width="100dp"-->
-                <!--android:layout_height="100dp"-->
-                <!--android:src="@drawable/bordered_c_10"-->
-                <!--android:scaleType="centerInside"/>-->
-        <!--</LinearLayout>-->
-    <!--</LinearLayout>-->
 
     <LinearLayout
         android:id="@+id/layout_game_operator_panel"
@@ -158,9 +112,15 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:orientation="horizontal"
-        android:layout_below="@+id/layout_game_operator_panel">
+        android:gravity="center_vertical"
+        android:layout_alignParentBottom="true"
+        android:background="#99333333"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
         <TextView
             android:id="@+id/text_game_equation"
@@ -169,13 +129,13 @@
             android:text="(1+2)*3+4"
             android:textSize="30dp"
             android:layout_weight="1"
-            android:gravity="center"/>
+            android:textColor="#ffffff"/>
 
         <Button
             android:id="@+id/button_game_backspace"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="B"/>
+            android:layout_width="40dp"
+            android:layout_height="30dp"
+            android:background="@drawable/button_backspace_selector"/>
 
     </LinearLayout>
 
