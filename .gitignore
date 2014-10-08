@@ -1,0 +1,26 @@
+# Android Studio
+.idea
+build
+.idea
+.gradle
+
+# System files
+.DS_Store
+Thumb.db
+
+# built app files
+*.apk
+*.ap_
+
+# dex VM
+*.dex
+
+# Java
+*.class
+
+# generated files
+bin
+gen
+
+# Local configuration file
+local.properties

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/button_game_restart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Restart"/>
+
+    <LinearLayout
+        android:id="@+id/layout_game_card_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_marginBottom="40dp"
+        android:layout_centerInParent="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/button_game_card_1"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/bordered_c_10"
+                android:scaleType="centerInside"/>
+
+            <ImageButton
+                android:id="@+id/button_game_card_2"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/bordered_c_10"
+                android:scaleType="centerInside"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/button_game_card_3"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/bordered_c_10"
+                android:scaleType="centerInside"/>
+
+            <ImageButton
+                android:id="@+id/button_game_card_4"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/bordered_c_10"
+                android:scaleType="centerInside"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_game_operator_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@+id/layout_game_card_area">
+
+        <Button
+            android:id="@+id/button_game_op_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+"/>
+
+        <Button
+            android:id="@+id/button_game_op_minus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-"/>
+
+        <Button
+            android:id="@+id/button_game_op_multiply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*"/>
+
+        <Button
+            android:id="@+id/button_game_op_divide"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"/>
+
+        <Button
+            android:id="@+id/button_game_op_left_bracket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="("/>
+
+        <Button
+            android:id="@+id/button_game_op_right_bracket"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=")"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/layout_game_operator_panel">
+
+        <TextView
+            android:id="@+id/text_game_equation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="(1+2)*3+4"
+            android:textSize="30dp"
+            android:layout_weight="1"
+            android:gravity="center"/>
+
+        <Button
+            android:id="@+id/button_game_backspace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="B"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

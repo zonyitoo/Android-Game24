@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">24Game</string>
+    <string name="string_Splash_StartGame">Start Game!</string>
+    <string name="string_Splash_Loading">Shuffling cards...</string>
+    <string name="string_Confirm_Yes">Yes</string>
+    <string name="string_Confirm_No">No</string>
+    <string name="string_Confirm_Exit_Title">Exit?</string>
+
+</resources>
