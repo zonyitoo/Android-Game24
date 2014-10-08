@@ -2,11 +2,11 @@ package me.zonyitoo.game24;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -14,12 +14,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GameActivity extends Activity {
 
     ImageButton[] button_Cards;
-    HashMap<Character, Button> operators = new HashMap<Character, Button>();
+    HashMap<Equation.EquationOperatorType, Button> button_Operators
+            = new HashMap<Equation.EquationOperatorType, Button>();
 
     TextView textView_Equation;
 
@@ -45,19 +45,25 @@ public class GameActivity extends Activity {
             (ImageButton) findViewById(R.id.button_game_card_4)
         };
 
-        operators.put('+', (Button) findViewById(R.id.button_game_op_plus));
-        operators.put('-', (Button) findViewById(R.id.button_game_op_minus));
-        operators.put('*', (Button) findViewById(R.id.button_game_op_multiply));
-        operators.put('/', (Button) findViewById(R.id.button_game_op_divide));
-        operators.put('(', (Button) findViewById(R.id.button_game_op_left_bracket));
-        operators.put(')', (Button) findViewById(R.id.button_game_op_right_bracket));
+        button_Operators.put(Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS,
+                (Button) findViewById(R.id.button_game_op_plus));
+        button_Operators.put(Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MINUS,
+                (Button) findViewById(R.id.button_game_op_minus));
+        button_Operators.put(Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MULTIPLY,
+                (Button) findViewById(R.id.button_game_op_multiply));
+        button_Operators.put(Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_DIVIDE,
+                (Button) findViewById(R.id.button_game_op_divide));
+        button_Operators.put(Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_LEFT_BRACKET,
+                (Button) findViewById(R.id.button_game_op_left_bracket));
+        button_Operators.put(Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_RIGHT_BRACKET,
+                (Button) findViewById(R.id.button_game_op_right_bracket));
 
-        // Cards and operators use the same listener
+        // button_Cards and button_Operators use the same listener
         CardsOperatorClickListener listener = new CardsOperatorClickListener();
         for (ImageButton c : button_Cards) {
             c.setOnClickListener(listener);
         }
-        for (Button op : operators.values()) {
+        for (Button op : button_Operators.values()) {
             op.setOnClickListener(listener);
         }
 
@@ -68,24 +74,52 @@ public class GameActivity extends Activity {
         button_Restart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                refresh();
+                restart();
             }
         });
 
-        refresh();
+        restart();
 	}
 
-    void refresh() {
+    void restart() {
         showingCards = dealer.deal();
 
         for (int i = 0; i < showingCards.size(); ++i) {
             ImageButton curBtn = this.button_Cards[i];
             curBtn.setImageBitmap(showingCards.get(i).getImageBitmap());
         }
+
+        Animation[] anims = new Animation[] {
+            AnimationUtils.loadAnimation(this, R.anim.activity_game_card_enter_ul),
+            AnimationUtils.loadAnimation(this, R.anim.activity_game_card_enter_ur),
+            AnimationUtils.loadAnimation(this, R.anim.activity_game_card_enter_bl),
+            AnimationUtils.loadAnimation(this, R.anim.activity_game_card_enter_br)
+        };
+
+        for (int i = 0; i < button_Cards.length; ++i) {
+            button_Cards[i].startAnimation(anims[i]);
+            button_Cards[i].setEnabled(true);
+        }
+
+        textView_Equation.setText("");
+        currentInputBuffer.clear();
+    }
+
+    private void refreshEquationView() {
+        StringBuilder b = new StringBuilder();
+        for (Equation.EquationNode n : currentInputBuffer) {
+            b.append(n.toString());
+        }
+
+        textView_Equation.setText(b.toString());
     }
 
     @Override
     public void onBackPressed() {
+        /*
+        When pressing the back button, a dialog will pop up and ask for confirmation.
+        For preventing hit the button by accident.
+         */
         AlertDialog.Builder exitAlertBuilder = new AlertDialog.Builder(this);
         exitAlertBuilder.setTitle(R.string.string_Confirm_Exit_Title);
         exitAlertBuilder.setPositiveButton(R.string.string_Confirm_Yes, new DialogInterface.OnClickListener() {
@@ -109,31 +143,83 @@ public class GameActivity extends Activity {
 
         @Override
         public void onClick(View view) {
+            /*
+            Each press will insert a `Equation.EquationNode` object into the array.
+            Some of them may also disable some button.
+             */
             switch (view.getId()) {
                 // Selecting cards, which will be translated into integers
-                case R.id.button_game_card_1:
-                    break;
-                case R.id.button_game_card_2:
-                    break;
-                case R.id.button_game_card_3:
-                    break;
-                case R.id.button_game_card_4:
-                    break;
+                case R.id.button_game_card_1: {
+                    int number = showingCards.get(0).getNumber();
+                    Equation.EquationIntegerOperand op = new Equation.EquationIntegerOperand(number);
+                    currentInputBuffer.add(op);
 
-                // Selecting operators
+                    // Disable it
+                    view.setEnabled(false);
+                    break;
+                }
+                case R.id.button_game_card_2: {
+                    int number = showingCards.get(1).getNumber();
+                    Equation.EquationIntegerOperand op = new Equation.EquationIntegerOperand(number);
+                    currentInputBuffer.add(op);
+
+                    // Disable it
+                    view.setEnabled(false);
+                    break;
+                }
+                case R.id.button_game_card_3: {
+                    int number = showingCards.get(2).getNumber();
+                    Equation.EquationIntegerOperand op = new Equation.EquationIntegerOperand(number);
+                    currentInputBuffer.add(op);
+
+                    // Disable it
+                    view.setEnabled(false);
+                    break;
+                }
+                case R.id.button_game_card_4: {
+                    int number = showingCards.get(3).getNumber();
+                    Equation.EquationIntegerOperand op = new Equation.EquationIntegerOperand(number);
+                    currentInputBuffer.add(op);
+
+                    // Disable it
+                    view.setEnabled(false);
+                    break;
+                }
+
+                // Selecting button_Operators
                 case R.id.button_game_op_plus:
+                    currentInputBuffer.add(
+                            new Equation.EquationOperator(
+                                    Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS));
                     break;
                 case R.id.button_game_op_minus:
+                    currentInputBuffer.add(
+                            new Equation.EquationOperator(
+                                    Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MINUS));
                     break;
                 case R.id.button_game_op_multiply:
+                    currentInputBuffer.add(
+                            new Equation.EquationOperator(
+                                    Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MULTIPLY));
                     break;
                 case R.id.button_game_op_divide:
+                    currentInputBuffer.add(
+                            new Equation.EquationOperator(
+                                    Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_DIVIDE));
                     break;
                 case R.id.button_game_op_left_bracket:
+                    currentInputBuffer.add(
+                            new Equation.EquationOperator(
+                                    Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_LEFT_BRACKET));
                     break;
                 case R.id.button_game_op_right_bracket:
+                    currentInputBuffer.add(
+                            new Equation.EquationOperator(
+                                    Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_RIGHT_BRACKET));
                     break;
             }
+
+            refreshEquationView();
         }
     }
 }

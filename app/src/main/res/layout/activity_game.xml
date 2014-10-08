@@ -14,61 +14,109 @@
         android:id="@+id/layout_game_card_area"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
+        android:layout_centerInParent="true"
         android:layout_marginBottom="40dp"
-        android:layout_centerInParent="true">
+        android:gravity="center">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <android.support.v7.widget.GridLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            app:rowCount="2"
+            app:columnCount="2">
 
             <ImageButton
                 android:id="@+id/button_game_card_1"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
                 android:src="@drawable/bordered_c_10"
                 android:scaleType="centerInside"/>
 
             <ImageButton
                 android:id="@+id/button_game_card_2"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
                 android:src="@drawable/bordered_c_10"
                 android:scaleType="centerInside"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
 
             <ImageButton
                 android:id="@+id/button_game_card_3"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
                 android:src="@drawable/bordered_c_10"
                 android:scaleType="centerInside"/>
 
             <ImageButton
                 android:id="@+id/button_game_card_4"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="130dp"
+                android:layout_height="130dp"
                 android:src="@drawable/bordered_c_10"
                 android:scaleType="centerInside"/>
-        </LinearLayout>
+
+        </android.support.v7.widget.GridLayout>
+
     </LinearLayout>
+
+    <!--<LinearLayout-->
+        <!--android:id="@+id/layout_game_card_area"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:gravity="center"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_marginBottom="40dp"-->
+        <!--android:layout_centerInParent="true">-->
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:gravity="center">-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/button_game_card_1"-->
+                <!--android:layout_width="100dp"-->
+                <!--android:layout_height="100dp"-->
+                <!--android:src="@drawable/bordered_c_10"-->
+                <!--android:scaleType="centerInside"/>-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/button_game_card_2"-->
+                <!--android:layout_width="100dp"-->
+                <!--android:layout_height="100dp"-->
+                <!--android:src="@drawable/bordered_c_10"-->
+                <!--android:scaleType="centerInside"/>-->
+        <!--</LinearLayout>-->
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:gravity="center">-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/button_game_card_3"-->
+                <!--android:layout_width="100dp"-->
+                <!--android:layout_height="100dp"-->
+                <!--android:src="@drawable/bordered_c_10"-->
+                <!--android:scaleType="centerInside"/>-->
+
+            <!--<ImageButton-->
+                <!--android:id="@+id/button_game_card_4"-->
+                <!--android:layout_width="100dp"-->
+                <!--android:layout_height="100dp"-->
+                <!--android:src="@drawable/bordered_c_10"-->
+                <!--android:scaleType="centerInside"/>-->
+        <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
 
     <LinearLayout
         android:id="@+id/layout_game_operator_panel"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_marginBottom="10dp"
-        android:layout_below="@+id/layout_game_card_area">
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true">
 
         <Button
             android:id="@+id/button_game_op_plus"

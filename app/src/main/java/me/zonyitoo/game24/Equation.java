@@ -36,10 +36,10 @@ public class Equation {
         EQUATION_OPERATOR_TYPE_RIGHT_BRACKET
     }
 
-    public abstract class EquationNode {
+    public static abstract class EquationNode {
     }
 
-    public class EquationOperator extends EquationNode {
+    public static class EquationOperator extends EquationNode {
 
         private EquationOperatorType type = EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS;
 
@@ -50,9 +50,28 @@ public class Equation {
         public EquationOperatorType getType() {
             return type;
         }
+
+        public String toString() {
+            switch (getType()) {
+                case EQUATION_OPERATOR_TYPE_PLUS:
+                    return "+";
+                case EQUATION_OPERATOR_TYPE_MINUS:
+                    return "-";
+                case EQUATION_OPERATOR_TYPE_MULTIPLY:
+                    return "×";
+                case EQUATION_OPERATOR_TYPE_DIVIDE:
+                    return "÷";
+                case EQUATION_OPERATOR_TYPE_LEFT_BRACKET:
+                    return "(";
+                case EQUATION_OPERATOR_TYPE_RIGHT_BRACKET:
+                    return ")";
+            }
+
+            return null;
+        }
     }
 
-    public class EquationIntegerOperand extends EquationNode {
+    public static class EquationIntegerOperand extends EquationNode {
 
         private Integer data = 0;
 
@@ -62,6 +81,10 @@ public class Equation {
 
         public Integer getData() {
             return data;
+        }
+
+        public String toString() {
+            return String.valueOf(data);
         }
     }
 }
