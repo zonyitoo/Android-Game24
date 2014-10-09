@@ -178,13 +178,20 @@
             android:id="@+id/button_game_backspace"
             android:layout_width="40dp"
             android:layout_height="30dp"
+            android:layout_marginRight="10dp"
             android:background="@drawable/button_backspace_selector"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#f6f6f6" />
 
         <Button
             android:id="@+id/button_game_evaluate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="="/>
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/button_equal_selector"/>
 
     </LinearLayout>
 

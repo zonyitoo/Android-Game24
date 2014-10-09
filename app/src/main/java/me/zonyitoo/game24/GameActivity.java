@@ -7,6 +7,7 @@ import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.kiprobinson.util.BigFraction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,7 +101,6 @@ public class GameActivity extends ActionBarActivity {
                             pressedButtonBuffer.get(pressedButtonBuffer.size() - 1);
                     cardButton.setEnabled(true);
                     --nSelectedCards;
-                    button_Evaluate.setEnabled(false);
                 }
                 pressedButtonBuffer.remove(pressedButtonBuffer.size() - 1);
 
@@ -123,7 +125,6 @@ public class GameActivity extends ActionBarActivity {
                 nSelectedCards = 0;
                 refreshEquationView();
                 view.setEnabled(false);
-                button_Evaluate.setEnabled(false);
                 return true;
             }
         });
@@ -145,20 +146,60 @@ public class GameActivity extends ActionBarActivity {
         button_Evaluate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    double result = equation.evaluate();
-                    String s = textView_Equation.getText().toString();
-                    textView_Equation.setText(s + "=" + String.valueOf(result));
-                } catch (Equation.MalformedEquationException e) {
-                    Toast.makeText(GameActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                if (nSelectedCards < 4) {
+                    Toast.makeText(GameActivity.this,
+                            R.string.string_Game_Should_Use_All_Cards, Toast.LENGTH_SHORT)
+                            .show();
+                    return;
                 }
+
+                try {
+                    BigFraction result = equation.evaluate();
+                    String s = textView_Equation.getText().toString();
+
+                    if (result.equalsNumber(24)) {
+                        s += "=" + 24;
+                    } else {
+                        s = "<font color='red'>" + s + "≠" + 24 + "</font>";
+                    }
+                    textView_Equation.setText(Html.fromHtml(s));
+                } catch (Equation.MalformedEquationException e) {
+                    textView_Equation.setText(
+                            Html.fromHtml("<font color='red'>" + e.getMessage() + "</font>"));
+                }
+
+                freezeTheWorld();
             }
         });
 
         restart();
 	}
 
-    void restart() {
+    private void freezeTheWorld() {
+        for (ImageButton cbtn : this.button_Cards) {
+            cbtn.setEnabled(false);
+        }
+        for (Button opbtn : this.button_Operators.values()) {
+            opbtn.setEnabled(false);
+        }
+
+        button_BackSpace.setEnabled(false);
+        button_Evaluate.setEnabled(false);
+    }
+
+    private void unfreezeTheWorld() {
+        for (ImageButton cbtn : this.button_Cards) {
+            cbtn.setEnabled(true);
+        }
+        for (Button opbtn : this.button_Operators.values()) {
+            opbtn.setEnabled(true);
+        }
+
+        button_BackSpace.setEnabled(true);
+        button_Evaluate.setEnabled(true);
+    }
+
+    private void restart() {
         showingCards = dealer.deal();
 
         for (int i = 0; i < showingCards.size(); ++i) {
@@ -179,17 +220,19 @@ public class GameActivity extends ActionBarActivity {
         Random random = new Random();
         for (int i = 0; i < button_Cards.length; ++i) {
             button_Cards[i].startAnimation(anim_Cards[i]);
-            button_Cards[i].setEnabled(true);
             // Rotate random angle
             button_Cards[i].setRotation(random.nextFloat() * 360.0f);
         }
 
+        unfreezeTheWorld();
+
         textView_Equation.setText("");
         equation.clear();
+
         pressedButtonBuffer.clear();
-        button_BackSpace.setEnabled(false);
-        button_Evaluate.setEnabled(false);
         nSelectedCards = 0;
+
+        button_BackSpace.setEnabled(false);
     }
 
     private void refreshEquationView() {
@@ -346,10 +389,6 @@ public class GameActivity extends ActionBarActivity {
 
             // Enable the backspace button
             button_BackSpace.setEnabled(true);
-
-            if (nSelectedCards == 4) {
-                button_Evaluate.setEnabled(true);
-            }
 
             refreshEquationView();
         }

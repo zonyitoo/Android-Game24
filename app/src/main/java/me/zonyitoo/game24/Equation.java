@@ -1,7 +1,8 @@
 package me.zonyitoo.game24;
 
-import android.util.Log;
+import com.github.kiprobinson.util.BigFraction;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -146,9 +147,9 @@ public class Equation {
         return currentInputBuffer.isEmpty();
     }
 
-    public double evaluate() throws MalformedEquationException {
+    public BigFraction evaluate() throws MalformedEquationException {
         if (parsingState == State.STATE_INIT)
-            return 0.0;
+            return BigFraction.ZERO;
 
         if (parsingState == State.STATE_OPERATOR
                 || parsingState == State.STATE_LEFT_BRACKET) {
@@ -207,32 +208,35 @@ public class Equation {
         }
 
         // Evaluate the RPN
-        Stack<Double> rpn_valstack = new Stack<Double>();
+        Stack<BigFraction> rpn_valstack = new Stack<BigFraction>();
         for (EquationNode node : rpn) {
             if (node instanceof EquationOperand) {
-                Integer val = (Integer) ((EquationOperand) node).getData();
-                rpn_valstack.push(val.doubleValue());
+                Number val = ((EquationOperand) node).getData();
+                rpn_valstack.push(BigFraction.valueOf(val));
             } else {
                 if (rpn_valstack.size() < 2) {
                     throw new MalformedEquationException("Operand number mismatch");
                 }
 
-                Double val2 = rpn_valstack.pop();
-                Double val1 = rpn_valstack.pop();
-                Double result = Double.NaN;
+                BigFraction val2 = rpn_valstack.pop();
+                BigFraction val1 = rpn_valstack.pop();
+                BigFraction result = null;
 
                 switch (((EquationOperator) node).getType()) {
                     case EQUATION_OPERATOR_TYPE_PLUS:
-                        result = val1 + val2;
+                        result = val1.add(val2);
                         break;
                     case EQUATION_OPERATOR_TYPE_MINUS:
-                        result = val1 - val2;
+                        result = val1.subtract(val2);
                         break;
                     case EQUATION_OPERATOR_TYPE_MULTIPLY:
-                        result = val1 * val2;
+                        result = val1.multiply(val2);
                         break;
                     case EQUATION_OPERATOR_TYPE_DIVIDE:
-                        result = val1 / val2;
+                        if (val2.equals(BigDecimal.ZERO)) {
+                            throw new MalformedEquationException("Divide zero error");
+                        }
+                        result = val1.divide(val2);
                         break;
                 }
                 rpn_valstack.push(result);
@@ -301,7 +305,7 @@ public class Equation {
         }
     }
 
-    public static class EquationOperand<T> extends EquationNode {
+    public static class EquationOperand<T extends Number> extends EquationNode {
         private T data;
         public EquationOperand(T data) {
             this.data = data;
