@@ -115,41 +115,47 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true">
 
-        <Button
+        <ImageButton
             android:id="@+id/button_game_op_plus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="+"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/button_game_operator_plus_selector"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/button_game_op_minus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="-"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/button_game_operator_minus_selector"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/button_game_op_multiply"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="*"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/button_game_operator_multiply_selector"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/button_game_op_divide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="/"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/button_game_operator_divide_selector"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/button_game_op_left_bracket"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="("/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/button_game_operator_left_bracket_selector"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/button_game_op_right_bracket"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=")"/>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/button_operator_right_bracket_selector"/>
 
     </LinearLayout>
 

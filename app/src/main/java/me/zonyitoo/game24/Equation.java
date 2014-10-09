@@ -67,7 +67,8 @@ public class Equation {
                     }
                     break;
                 case EQUATION_OPERATOR_TYPE_RIGHT_BRACKET:
-                    if (parsingState == State.STATE_OPERAND) {
+                    if (parsingState == State.STATE_OPERAND
+                            || parsingState == State.STATE_RIGHT_BRACKET) {
                         if (curBracketLevel == 0) {
                             throw new MalformedEquationException("Bracket mismatch");
                         }
@@ -154,7 +155,7 @@ public class Equation {
         if (parsingState == State.STATE_OPERATOR
                 || parsingState == State.STATE_LEFT_BRACKET) {
             // Impossible cases
-            throw new MalformedEquationException("Incomplete equation");
+            throw new MalformedEquationException("Malformed equation");
         } else if (curBracketLevel != 0) {
             throw new MalformedEquationException("Bracket mismatch");
         }

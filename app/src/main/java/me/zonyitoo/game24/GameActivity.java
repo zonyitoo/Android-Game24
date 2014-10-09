@@ -30,8 +30,8 @@ public class GameActivity extends ActionBarActivity {
     static final int MAX_BRACKET_LEVEL = 3;
 
     ImageButton[] button_Cards;
-    HashMap<Equation.EquationOperatorType, Button> button_Operators
-            = new HashMap<Equation.EquationOperatorType, Button>();
+    HashMap<Equation.EquationOperatorType, ImageButton> button_Operators
+            = new HashMap<Equation.EquationOperatorType, ImageButton>();
 
     TextView textView_Equation;
 
@@ -62,24 +62,24 @@ public class GameActivity extends ActionBarActivity {
         };
 
         button_Operators.put(Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS,
-                (Button) findViewById(R.id.button_game_op_plus));
+                (ImageButton) findViewById(R.id.button_game_op_plus));
         button_Operators.put(Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MINUS,
-                (Button) findViewById(R.id.button_game_op_minus));
+                (ImageButton) findViewById(R.id.button_game_op_minus));
         button_Operators.put(Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MULTIPLY,
-                (Button) findViewById(R.id.button_game_op_multiply));
+                (ImageButton) findViewById(R.id.button_game_op_multiply));
         button_Operators.put(Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_DIVIDE,
-                (Button) findViewById(R.id.button_game_op_divide));
+                (ImageButton) findViewById(R.id.button_game_op_divide));
         button_Operators.put(Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_LEFT_BRACKET,
-                (Button) findViewById(R.id.button_game_op_left_bracket));
+                (ImageButton) findViewById(R.id.button_game_op_left_bracket));
         button_Operators.put(Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_RIGHT_BRACKET,
-                (Button) findViewById(R.id.button_game_op_right_bracket));
+                (ImageButton) findViewById(R.id.button_game_op_right_bracket));
 
         // button_Cards and button_Operators use the same listener
         CardsOperatorClickListener listener = new CardsOperatorClickListener();
         for (ImageButton c : button_Cards) {
             c.setOnClickListener(listener);
         }
-        for (Button op : button_Operators.values()) {
+        for (ImageButton op : button_Operators.values()) {
             op.setOnClickListener(listener);
         }
 
@@ -179,7 +179,7 @@ public class GameActivity extends ActionBarActivity {
         for (ImageButton cbtn : this.button_Cards) {
             cbtn.setEnabled(false);
         }
-        for (Button opbtn : this.button_Operators.values()) {
+        for (ImageButton opbtn : this.button_Operators.values()) {
             opbtn.setEnabled(false);
         }
 
@@ -191,7 +191,7 @@ public class GameActivity extends ActionBarActivity {
         for (ImageButton cbtn : this.button_Cards) {
             cbtn.setEnabled(true);
         }
-        for (Button opbtn : this.button_Operators.values()) {
+        for (ImageButton opbtn : this.button_Operators.values()) {
             opbtn.setEnabled(true);
         }
 
