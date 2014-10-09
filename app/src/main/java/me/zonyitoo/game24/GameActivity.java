@@ -3,6 +3,9 @@ package me.zonyitoo.game24;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.StateListDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -10,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -18,6 +22,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class GameActivity extends ActionBarActivity {
 
@@ -31,6 +36,7 @@ public class GameActivity extends ActionBarActivity {
 //    Button button_Restart;
 
     ArrayList<Equation.EquationNode> currentInputBuffer = new ArrayList<Equation.EquationNode>();
+    ArrayList<View> pressedButtonBuffer = new ArrayList<View>();
 
     List<CardDealer.Card> showingCards;
     CardDealer dealer;
@@ -86,18 +92,11 @@ public class GameActivity extends ActionBarActivity {
                 }
 
                 if (node instanceof Equation.EquationIntegerOperand) {
-                    // Is a card
-                    Equation.EquationIntegerOperand num = (Equation.EquationIntegerOperand) node;
-
-                    for (int i = 0; i < showingCards.size(); ++i) {
-                        if (showingCards.get(i).getNumber() == num.getData()) {
-                            button_Cards[i].setEnabled(true);
-                            break;
-                        }
-                    }
-                } else {
-
+                    View cardButton =
+                            pressedButtonBuffer.get(pressedButtonBuffer.size() - 1);
+                    cardButton.setEnabled(true);
                 }
+                pressedButtonBuffer.remove(pressedButtonBuffer.size() - 1);
 
                 refreshEquationView();
             }
@@ -111,6 +110,7 @@ public class GameActivity extends ActionBarActivity {
                 }
 
                 currentInputBuffer.clear();
+                pressedButtonBuffer.clear();
 
                 for (ImageButton b : button_Cards) {
                     b.setEnabled(true);
@@ -138,7 +138,17 @@ public class GameActivity extends ActionBarActivity {
 
         for (int i = 0; i < showingCards.size(); ++i) {
             ImageButton curBtn = this.button_Cards[i];
-            curBtn.setImageBitmap(showingCards.get(i).getImageBitmap());
+
+            StateListDrawable states = new StateListDrawable();
+            states.addState(new int[] {android.R.attr.state_enabled},
+                    showingCards.get(i).getImageDrawable());
+            states.addState(new int[] {},
+                    getResources().getDrawable(R.drawable.card_back));
+            if (Build.VERSION.SDK_INT >= 16) {
+                curBtn.setBackground(states);
+            } else {
+                curBtn.setBackgroundDrawable(states); // For backward capability.
+            }
         }
 
         Animation[] anims = new Animation[] {
@@ -148,13 +158,21 @@ public class GameActivity extends ActionBarActivity {
             AnimationUtils.loadAnimation(this, R.anim.activity_game_card_enter_br)
         };
 
+        anims[0].setStartOffset(200);
+        anims[3].setStartOffset(200);
+        anims[2].setStartOffset(300);
+
+        Random random = new Random();
         for (int i = 0; i < button_Cards.length; ++i) {
             button_Cards[i].startAnimation(anims[i]);
             button_Cards[i].setEnabled(true);
+            // Rotate random angle
+            button_Cards[i].setRotation(random.nextFloat() * 360.0f);
         }
 
         textView_Equation.setText("");
         currentInputBuffer.clear();
+        pressedButtonBuffer.clear();
         button_BackSpace.setEnabled(false);
     }
 
@@ -287,6 +305,8 @@ public class GameActivity extends ActionBarActivity {
                                     Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_RIGHT_BRACKET));
                     break;
             }
+
+            pressedButtonBuffer.add(view);
 
             // Enable the button
             button_BackSpace.setEnabled(true);

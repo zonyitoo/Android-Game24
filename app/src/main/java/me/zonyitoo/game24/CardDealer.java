@@ -3,6 +3,7 @@ package me.zonyitoo.game24;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -124,22 +125,35 @@ public class CardDealer {
             return number;
         }
 
-        public Bitmap getImageBitmap() {
-            return dealer.getCardImageBitmapById(this.resourceId);
+//        public Bitmap getImageBitmap() {
+//            return dealer.getCardImageBitmapById(this.resourceId);
+//        }
+        public Drawable getImageDrawable() {
+            return dealer.getCardImageDrawableById(this.resourceId);
         }
     }
 
-    public Bitmap getCardImageBitmapById(int id) {
+//    public Bitmap getCardImageBitmapById(int id) {
+//        if (cache.containsKey(id)) {
+//            return cache.get(id);
+//        } else {
+//            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), id);
+//            cache.put(id, bitmap);
+//            return bitmap;
+//        }
+//    }
+
+    public Drawable getCardImageDrawableById(int id) {
         if (cache.containsKey(id)) {
-            return cache.get(id);
+            return (Drawable) cache.get(id);
         } else {
-            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), id);
-            cache.put(id, bitmap);
-            return bitmap;
+            Drawable d = context.getResources().getDrawable(id);
+            cache.put(id, d);
+            return d;
         }
     }
 
-    protected class LRUCardCache extends LinkedHashMap<Integer, Bitmap> {
+    protected class LRUCardCache extends LinkedHashMap<Integer, Object> {
 
         private int maxCapacity;
 
@@ -151,19 +165,19 @@ public class CardDealer {
         }
 
         @Override
-        protected boolean removeEldestEntry(Entry<Integer, Bitmap> eldest) {
+        protected boolean removeEldestEntry(Entry<Integer, Object> eldest) {
             return this.size() > maxCapacity;
         }
 
         @Override
-        public Bitmap get(Object key) {
+        public Object get(Object key) {
             synchronized (this) {
                 return super.get(key);
             }
         }
 
         @Override
-        public Bitmap put(Integer key, Bitmap b) {
+        public Object put(Integer key, Object b) {
             synchronized (this) {
                 return super.put(key, b);
             }
