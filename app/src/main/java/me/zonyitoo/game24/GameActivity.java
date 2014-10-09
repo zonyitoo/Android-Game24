@@ -1,23 +1,21 @@
 package me.zonyitoo.game24;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.drawable.BitmapDrawable;
+import android.content.Intent;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +24,8 @@ import java.util.Random;
 
 public class GameActivity extends ActionBarActivity {
 
+    static final int MAX_BRACKET_LEVEL = 3;
+
     ImageButton[] button_Cards;
     HashMap<Equation.EquationOperatorType, Button> button_Operators
             = new HashMap<Equation.EquationOperatorType, Button>();
@@ -33,13 +33,16 @@ public class GameActivity extends ActionBarActivity {
     TextView textView_Equation;
 
     Button button_BackSpace;
-//    Button button_Restart;
+    Button button_Evaluate;
 
-    ArrayList<Equation.EquationNode> currentInputBuffer = new ArrayList<Equation.EquationNode>();
     ArrayList<View> pressedButtonBuffer = new ArrayList<View>();
+    Equation equation = new Equation(MAX_BRACKET_LEVEL);
 
     List<CardDealer.Card> showingCards;
     CardDealer dealer;
+    int nSelectedCards = 0;
+
+    Animation[] anim_Cards;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,17 +87,18 @@ public class GameActivity extends ActionBarActivity {
         button_BackSpace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Equation.EquationNode node = currentInputBuffer.get(currentInputBuffer.size() - 1);
-                currentInputBuffer.remove(currentInputBuffer.size() - 1);
+                Equation.EquationNode node = equation.pop();
 
-                if (currentInputBuffer.isEmpty()) {
+                if (equation.isEmpty()) {
                     view.setEnabled(false);
                 }
 
-                if (node instanceof Equation.EquationIntegerOperand) {
+                if (node instanceof Equation.EquationOperand) {
                     View cardButton =
                             pressedButtonBuffer.get(pressedButtonBuffer.size() - 1);
                     cardButton.setEnabled(true);
+                    --nSelectedCards;
+                    button_Evaluate.setEnabled(false);
                 }
                 pressedButtonBuffer.remove(pressedButtonBuffer.size() - 1);
 
@@ -105,30 +109,51 @@ public class GameActivity extends ActionBarActivity {
         button_BackSpace.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                if (currentInputBuffer.isEmpty()) {
+                if (equation.isEmpty()) {
                     return false;
                 }
 
-                currentInputBuffer.clear();
+                equation.clear();
                 pressedButtonBuffer.clear();
 
                 for (ImageButton b : button_Cards) {
                     b.setEnabled(true);
                 }
 
+                nSelectedCards = 0;
                 refreshEquationView();
                 view.setEnabled(false);
+                button_Evaluate.setEnabled(false);
                 return true;
             }
         });
 
-//        button_Restart = (Button) findViewById(R.id.button_game_restart);
-//        button_Restart.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                restart();
-//            }
-//        });
+        anim_Cards = new Animation[] {
+                AnimationUtils.loadAnimation(this, R.anim.activity_game_card_enter_ul),
+                AnimationUtils.loadAnimation(this, R.anim.activity_game_card_enter_ur),
+                AnimationUtils.loadAnimation(this, R.anim.activity_game_card_enter_bl),
+                AnimationUtils.loadAnimation(this, R.anim.activity_game_card_enter_br)
+            };
+
+        anim_Cards[0].setStartOffset(100);
+        anim_Cards[3].setStartOffset(200);
+        anim_Cards[2].setStartOffset(300);
+
+        // TODO: Set the translation animation deltaX, deltaY depending on the screen resolution
+
+        button_Evaluate = (Button) findViewById(R.id.button_game_evaluate);
+        button_Evaluate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    double result = equation.evaluate();
+                    String s = textView_Equation.getText().toString();
+                    textView_Equation.setText(s + "=" + String.valueOf(result));
+                } catch (Equation.MalformedEquationException e) {
+                    Toast.makeText(GameActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         restart();
 	}
@@ -151,38 +176,24 @@ public class GameActivity extends ActionBarActivity {
             }
         }
 
-        Animation[] anims = new Animation[] {
-            AnimationUtils.loadAnimation(this, R.anim.activity_game_card_enter_ul),
-            AnimationUtils.loadAnimation(this, R.anim.activity_game_card_enter_ur),
-            AnimationUtils.loadAnimation(this, R.anim.activity_game_card_enter_bl),
-            AnimationUtils.loadAnimation(this, R.anim.activity_game_card_enter_br)
-        };
-
-        anims[0].setStartOffset(200);
-        anims[3].setStartOffset(200);
-        anims[2].setStartOffset(300);
-
         Random random = new Random();
         for (int i = 0; i < button_Cards.length; ++i) {
-            button_Cards[i].startAnimation(anims[i]);
+            button_Cards[i].startAnimation(anim_Cards[i]);
             button_Cards[i].setEnabled(true);
             // Rotate random angle
             button_Cards[i].setRotation(random.nextFloat() * 360.0f);
         }
 
         textView_Equation.setText("");
-        currentInputBuffer.clear();
+        equation.clear();
         pressedButtonBuffer.clear();
         button_BackSpace.setEnabled(false);
+        button_Evaluate.setEnabled(false);
+        nSelectedCards = 0;
     }
 
     private void refreshEquationView() {
-        StringBuilder b = new StringBuilder();
-        for (Equation.EquationNode n : currentInputBuffer) {
-            b.append(n.toString());
-        }
-
-        textView_Equation.setText(b.toString());
+        textView_Equation.setText(equation.toString());
     }
 
     @Override
@@ -213,16 +224,25 @@ public class GameActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_game, menu);
 
-        MenuItem item_Refresh = menu.findItem(R.id.menu_game_refresh);
-        item_Refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                restart();
-                return true;
-            }
-        });
-
         super.onCreateOptionsMenu(menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_game_refresh:
+                restart();
+                break;
+            case R.id.menu_game_leader_board:
+                Intent intent = new Intent(this, LeaderBoardActivity.class);
+                startActivity(intent);
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        super.onOptionsItemSelected(item);
         return true;
     }
 
@@ -234,82 +254,102 @@ public class GameActivity extends ActionBarActivity {
             Each press will insert a `Equation.EquationNode` object into the array.
             Some of them may also disable some button.
              */
-            switch (view.getId()) {
-                // Selecting cards, which will be translated into integers
-                case R.id.button_game_card_1: {
-                    int number = showingCards.get(0).getNumber();
-                    Equation.EquationIntegerOperand op = new Equation.EquationIntegerOperand(number);
-                    currentInputBuffer.add(op);
+            try {
+                switch (view.getId()) {
+                    // Selecting cards, which will be translated into integers
+                    case R.id.button_game_card_1: {
+                        int number = showingCards.get(0).getNumber();
+                        Equation.EquationOperand<Integer> op = new Equation.EquationOperand<Integer>(number);
+                        equation.add(op);
 
-                    // Disable it
-                    view.setEnabled(false);
-                    break;
+                        ++nSelectedCards;
+
+                        // Disable it
+                        view.setEnabled(false);
+                        break;
+                    }
+                    case R.id.button_game_card_2: {
+                        int number = showingCards.get(1).getNumber();
+                        Equation.EquationOperand<Integer> op = new Equation.EquationOperand<Integer>(number);
+                        equation.add(op);
+
+                        ++nSelectedCards;
+
+                        // Disable it
+                        view.setEnabled(false);
+                        break;
+                    }
+                    case R.id.button_game_card_3: {
+                        int number = showingCards.get(2).getNumber();
+                        Equation.EquationOperand<Integer> op = new Equation.EquationOperand<Integer>(number);
+                        equation.add(op);
+
+                        ++nSelectedCards;
+
+                        // Disable it
+                        view.setEnabled(false);
+                        break;
+                    }
+                    case R.id.button_game_card_4: {
+                        int number = showingCards.get(3).getNumber();
+                        Equation.EquationOperand<Integer> op = new Equation.EquationOperand<Integer>(number);
+                        equation.add(op);
+
+                        ++nSelectedCards;
+
+                        // Disable it
+                        view.setEnabled(false);
+                        break;
+                    }
+
+                    // Selecting button_Operators
+                    case R.id.button_game_op_plus:
+                        equation.add(
+                                new Equation.EquationOperator(
+                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS, 1));
+                        break;
+                    case R.id.button_game_op_minus:
+                        equation.add(
+                                new Equation.EquationOperator(
+                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MINUS, 1));
+                        break;
+                    case R.id.button_game_op_multiply:
+                        equation.add(
+                                new Equation.EquationOperator(
+                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MULTIPLY, 2));
+                        break;
+                    case R.id.button_game_op_divide:
+                        equation.add(
+                                new Equation.EquationOperator(
+                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_DIVIDE, 2));
+                        break;
+                    case R.id.button_game_op_left_bracket:
+                        equation.add(
+                                new Equation.EquationOperator(
+                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_LEFT_BRACKET, 0));
+                        break;
+                    case R.id.button_game_op_right_bracket:
+                        equation.add(
+                                new Equation.EquationOperator(
+                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_RIGHT_BRACKET, 0));
+                        break;
                 }
-                case R.id.button_game_card_2: {
-                    int number = showingCards.get(1).getNumber();
-                    Equation.EquationIntegerOperand op = new Equation.EquationIntegerOperand(number);
-                    currentInputBuffer.add(op);
-
-                    // Disable it
-                    view.setEnabled(false);
-                    break;
-                }
-                case R.id.button_game_card_3: {
-                    int number = showingCards.get(2).getNumber();
-                    Equation.EquationIntegerOperand op = new Equation.EquationIntegerOperand(number);
-                    currentInputBuffer.add(op);
-
-                    // Disable it
-                    view.setEnabled(false);
-                    break;
-                }
-                case R.id.button_game_card_4: {
-                    int number = showingCards.get(3).getNumber();
-                    Equation.EquationIntegerOperand op = new Equation.EquationIntegerOperand(number);
-                    currentInputBuffer.add(op);
-
-                    // Disable it
-                    view.setEnabled(false);
-                    break;
-                }
-
-                // Selecting button_Operators
-                case R.id.button_game_op_plus:
-                    currentInputBuffer.add(
-                            new Equation.EquationOperator(
-                                    Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS));
-                    break;
-                case R.id.button_game_op_minus:
-                    currentInputBuffer.add(
-                            new Equation.EquationOperator(
-                                    Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MINUS));
-                    break;
-                case R.id.button_game_op_multiply:
-                    currentInputBuffer.add(
-                            new Equation.EquationOperator(
-                                    Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MULTIPLY));
-                    break;
-                case R.id.button_game_op_divide:
-                    currentInputBuffer.add(
-                            new Equation.EquationOperator(
-                                    Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_DIVIDE));
-                    break;
-                case R.id.button_game_op_left_bracket:
-                    currentInputBuffer.add(
-                            new Equation.EquationOperator(
-                                    Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_LEFT_BRACKET));
-                    break;
-                case R.id.button_game_op_right_bracket:
-                    currentInputBuffer.add(
-                            new Equation.EquationOperator(
-                                    Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_RIGHT_BRACKET));
-                    break;
+            } catch (Equation.MalformedEquationException e) {
+                Toast.makeText(GameActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
             }
 
+            // Record the pressed button for re-enabling after backspace
+            // It contains all buttons, including operators and cards
+            // Just for convenience
             pressedButtonBuffer.add(view);
 
-            // Enable the button
+            // Enable the backspace button
             button_BackSpace.setEnabled(true);
+
+            if (nSelectedCards == 4) {
+                button_Evaluate.setEnabled(true);
+            }
 
             refreshEquationView();
         }

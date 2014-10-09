@@ -2,10 +2,17 @@
 <resources>
 
     <string name="app_name">24Game</string>
+
     <string name="string_Splash_StartGame">Start Game!</string>
     <string name="string_Splash_Loading">Shuffling cards...</string>
+
     <string name="string_Confirm_Yes">Yes</string>
     <string name="string_Confirm_No">No</string>
     <string name="string_Confirm_Exit_Title">Exit?</string>
+
+    <string name="string_Game_Bracket_Level_Exceeded">Bracket level exceeded</string>
+    <string name="string_Game_Bracket_Mismatch">Bracket mismatch</string>
+
+    <string name="string_LeaderBoard_label">Leader board</string>
 
 </resources>

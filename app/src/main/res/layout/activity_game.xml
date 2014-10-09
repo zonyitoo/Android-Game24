@@ -170,7 +170,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="(1+2)*3+4"
-            android:textSize="30dp"
+            android:textSize="20dp"
             android:layout_weight="1"
             android:textColor="#ffffff"/>
 
@@ -179,6 +179,12 @@
             android:layout_width="40dp"
             android:layout_height="30dp"
             android:background="@drawable/button_backspace_selector"/>
+
+        <Button
+            android:id="@+id/button_game_evaluate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="="/>
 
     </LinearLayout>
 

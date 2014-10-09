@@ -1,19 +1,14 @@
 package me.zonyitoo.game24;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Random;
 
 /**
@@ -95,18 +90,32 @@ public class CardDealer {
     }
 
     public List<Card> deal() {
-        Card[] c = new Card[4];
+        ArrayList<Card> c = new ArrayList<Card>();
         Random r = new Random();
 
-        for (int nPickle = 0, nLeft = cards.size(), idx = 0;
-             nPickle < 4 && idx < cards.size(); --nLeft, ++idx) {
-            int rand = r.nextInt(nLeft);
-            if (rand < 4 - nPickle) {
-                c[nPickle++] = cards.get(idx);
-            }
-        }
+        do {
 
-        return Arrays.asList(c);
+            c.clear();
+
+            for (int i = 0; c.size() < 4 && i < cards.size(); ++i) {
+                int randint = r.nextInt(cards.size() - i);
+                if (randint < 4 - c.size()) {
+                    c.add(cards.get(i));
+                }
+            }
+
+        } while (!validateCardsCombination(c));
+
+        Log.d("GAME", c.toString());
+
+        return c;
+    }
+
+    private boolean validateCardsCombination(ArrayList<Card> c) {
+
+        // TODO: find at least one solution
+
+        return true;
     }
 
     public class Card {
@@ -125,23 +134,10 @@ public class CardDealer {
             return number;
         }
 
-//        public Bitmap getImageBitmap() {
-//            return dealer.getCardImageBitmapById(this.resourceId);
-//        }
         public Drawable getImageDrawable() {
             return dealer.getCardImageDrawableById(this.resourceId);
         }
     }
-
-//    public Bitmap getCardImageBitmapById(int id) {
-//        if (cache.containsKey(id)) {
-//            return cache.get(id);
-//        } else {
-//            Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), id);
-//            cache.put(id, bitmap);
-//            return bitmap;
-//        }
-//    }
 
     public Drawable getCardImageDrawableById(int id) {
         if (cache.containsKey(id)) {
