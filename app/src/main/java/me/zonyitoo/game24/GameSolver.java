@@ -20,17 +20,15 @@ public class GameSolver {
 
     public static final String LOG_TAG = GameSolver.class.getSimpleName();
 
-    private static final Equation.EquationOperatorType[] ops = new Equation.EquationOperatorType[] {
+    public static final Equation.EquationOperatorType[] AVAILABLE_OPERATORS = new Equation.EquationOperatorType[] {
             Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS,
             Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MINUS,
             Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MULTIPLY,
             Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_DIVIDE
     };
 
-    public static boolean isSolutionExists(List<CardDealer.Card> cards, BigFraction target) {
-        Set<List<CardDealer.Card>> cardPermutes = permuteCards(cards);
-        List<List<Equation.EquationOperatorType>> opProducts =
-                operatorProducts(ops, cards.size() - 1);
+    public static boolean isSolutionExists(Set<List<CardDealer.Card>> cardPermutes,
+                                           List<List<Equation.EquationOperatorType>> opProducts, BigFraction target) {
 
         return isSolutionExistsSolver(cardPermutes, opProducts, target);
     }
@@ -117,7 +115,7 @@ public class GameSolver {
         throw new ArithmeticException("Invalid operator");
     }
 
-    private static Set<List<CardDealer.Card>> permuteCards(List<CardDealer.Card> cards) {
+    public static Set<List<CardDealer.Card>> permuteCards(List<CardDealer.Card> cards) {
         Set<List<CardDealer.Card>> result = new HashSet<List<CardDealer.Card>>();
         permuteCardsSolver(cards, result, 0);
         return result;
@@ -139,7 +137,7 @@ public class GameSolver {
 
     }
 
-    private static List<List<Equation.EquationOperatorType>> operatorProducts(
+    public static List<List<Equation.EquationOperatorType>> operatorProducts(
             final Equation.EquationOperatorType[] ops, int repeat) {
         List<List<Equation.EquationOperatorType>> result = new ArrayList<List<Equation.EquationOperatorType>>();
         List<Equation.EquationOperatorType> stack = new ArrayList<Equation.EquationOperatorType>();

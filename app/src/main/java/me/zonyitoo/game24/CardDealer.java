@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Created by zonyitoo on 14/10/7.
@@ -26,6 +27,9 @@ public class CardDealer {
     LRUCardCache cache = new LRUCardCache(LRU_MAX_CAPACITY);
 
     List<Card> cards;
+
+    final List<List<Equation.EquationOperatorType>> OPERATOR_PRODUCTS =
+            GameSolver.operatorProducts(GameSolver.AVAILABLE_OPERATORS, 3);
 
     /**
      * Construct a new card dealer. <br/>
@@ -144,11 +148,13 @@ public class CardDealer {
             return false;
         }
 
-        // TODO: find at least one solution
-
         Log.d(LOG_TAG, "validateCardsCombination cards=" + c.toString());
 
-        boolean validateResult = GameSolver.isSolutionExists(c, BigFraction.valueOf(24));
+        // TODO: Use next lexicographical permutation algorithm will be better
+        Set<List<Card>> permuteCards = GameSolver.permuteCards(c);
+
+        boolean validateResult = GameSolver.isSolutionExists(permuteCards, OPERATOR_PRODUCTS,
+                BigFraction.valueOf(24));
         Log.d(LOG_TAG, "validateCardsCombination result=" + validateResult);
 
         return validateResult;

@@ -1,5 +1,6 @@
 package me.zonyitoo.game24;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -15,7 +16,12 @@ public class GameDBHelper extends SQLiteOpenHelper {
     public static final String SCORE_TABLE_NAME = "game24_score";
     public static final String SCORE_COLUMN_START_TIME = "start_time";
     public static final String SCORE_COLUMN_END_TIME = "end_time";
+    public static final String SCORE_COLUMN_INTERVAL = "interval";
     public static final String SCORE_COLUMN_RESULT = "result";
+
+    public static final int SCORE_RESULT_UNKNOWN = 0;
+    public static final int SCORE_RESULT_WON = 1;
+    public static final int SCORE_RESULT_LOST = 2;
 
     public GameDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,6 +33,7 @@ public class GameDBHelper extends SQLiteOpenHelper {
                                 "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                                 SCORE_COLUMN_START_TIME + " DATETIME NOT NULL," +
                                 SCORE_COLUMN_END_TIME + " DATETIME NOT NULL," +
+                                SCORE_COLUMN_INTERVAL + " INTEGER NOT NULL," +
                                 SCORE_COLUMN_RESULT + " INTEGER NOT NULL" +
                                 ")");
     }
@@ -39,18 +46,18 @@ public class GameDBHelper extends SQLiteOpenHelper {
     public static int scoreResultToInt(GameManager.GameResult result) {
         switch (result) {
             case GAME_RESULT_WON:
-                return 1;
+                return SCORE_RESULT_WON;
             case GAME_RESULT_LOST:
-                return 2;
+                return SCORE_RESULT_LOST;
         }
-        return 0;
+        return SCORE_RESULT_UNKNOWN;
     }
 
     public static GameManager.GameResult intToScoreResult(int i) {
         switch (i) {
-            case 1:
+            case SCORE_RESULT_WON:
                 return GameManager.GameResult.GAME_RESULT_WON;
-            case 2:
+            case SCORE_RESULT_LOST:
                 return GameManager.GameResult.GAME_RESULT_LOST;
             default:
                 return GameManager.GameResult.GAME_RESULT_UNKNOWN;
@@ -59,7 +66,14 @@ public class GameDBHelper extends SQLiteOpenHelper {
 
     public void addNewGameScore(GameManager.ScoreNode node) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("INSERT INTO " + SCORE_TABLE_NAME + " VALUES (null,?,?,?)",
-                new Object[] {node.getStartDate(), node.getEndDate(), scoreResultToInt(node.getGameResult())});
+        ContentValues values = new ContentValues();
+        values.put(GameDBHelper.SCORE_COLUMN_START_TIME, node.getStartDate().getTime());
+        values.put(GameDBHelper.SCORE_COLUMN_END_TIME, node.getEndDate().getTime());
+        values.put(GameDBHelper.SCORE_COLUMN_RESULT, scoreResultToInt(node.getGameResult()));
+        values.put(GameDBHelper.SCORE_COLUMN_INTERVAL, node.getInterval());
+
+        db.insert(GameDBHelper.SCORE_TABLE_NAME, null, values);
+
+        db.close();
     }
 }

@@ -51,8 +51,8 @@ public class GameManager {
             return result;
         }
 
-        public Date getInterval() {
-            return new Date(endDate.getTime() - startDate.getTime());
+        public long getInterval() {
+            return endDate.getTime() - startDate.getTime();
         }
     }
 
@@ -71,11 +71,12 @@ public class GameManager {
     }
 
     public void startGame() {
+        /*
         if (currentNode != null) {
             currentNode.endDate = new Date();
             currentNode.result = GameResult.GAME_RESULT_LOST;
             addScoreIntoDB(currentNode);
-        }
+        }*/
 
         currentNode = new ScoreNode(new Date());
     }

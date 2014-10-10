@@ -2,6 +2,7 @@ package me.zonyitoo.game24;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -23,6 +26,9 @@ public class ScoreBoardActivity extends ActionBarActivity {
 
     ListView list_Scores;
 
+    TextView text_WinCount;
+    TextView text_LoseCount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,9 +37,38 @@ public class ScoreBoardActivity extends ActionBarActivity {
 
         list_Scores = (ListView) findViewById(R.id.list_score_board_scores);
 
+        View headerView = LayoutInflater.from(this)
+                .inflate(R.layout.listheader_score_board_statistic, null);
+
+        text_WinCount = (TextView) headerView.findViewById(R.id.text_listheader_score_board_statistic_wins);
+        text_LoseCount = (TextView) headerView.findViewById(R.id.text_listheader_score_board_statistic_loses);
+
+        list_Scores.addHeaderView(headerView);
+
         GameDBHelper helper = new GameDBHelper(this);
-        Cursor cursor = helper.getReadableDatabase().query(GameDBHelper.SCORE_TABLE_NAME,
-                null, null, null, null, null, GameDBHelper.SCORE_COLUMN_START_TIME, null);
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        Cursor winCountCursor = db.rawQuery("SELECT COUNT(*) FROM "
+                        + GameDBHelper.SCORE_TABLE_NAME
+                        + " WHERE " + GameDBHelper.SCORE_COLUMN_RESULT + "=" + GameDBHelper.SCORE_RESULT_WON,
+                null);
+        winCountCursor.moveToFirst();
+        int winCount = winCountCursor.getInt(0);
+        winCountCursor.close();
+
+        Cursor loseCountCursor = db.rawQuery("SELECT COUNT(*) FROM "
+                + GameDBHelper.SCORE_TABLE_NAME
+                + " WHERE " + GameDBHelper.SCORE_COLUMN_RESULT + "=" + GameDBHelper.SCORE_RESULT_LOST,
+                null);
+        loseCountCursor.moveToFirst();
+        int loseCount = loseCountCursor.getInt(0);
+        loseCountCursor.close();
+
+        text_WinCount.setText(String.valueOf(winCount));
+        text_LoseCount.setText(String.valueOf(loseCount));
+
+        Cursor cursor = db.query(GameDBHelper.SCORE_TABLE_NAME,
+                null, null, null, null, null, GameDBHelper.SCORE_COLUMN_START_TIME + " DESC", "10");
 
         ArrayList<GameManager.ScoreNode> scores = new ArrayList<GameManager.ScoreNode>();
         while (cursor.moveToNext()) {
@@ -44,6 +79,7 @@ public class ScoreBoardActivity extends ActionBarActivity {
 
             scores.add(new GameManager.ScoreNode(startTime, endTime, result));
         }
+        cursor.close();
 
         list_Scores.setAdapter(new ScoreListAdapter(this, scores));
     }
@@ -79,19 +115,24 @@ public class ScoreBoardActivity extends ActionBarActivity {
                 view = LayoutInflater.from(context).inflate(R.layout.listitem_score_board_scores, null);
             }
 
+            TextView text_Id = (TextView) view.findViewById(R.id.text_listitem_score_board_id);
             TextView text_Interval = (TextView) view.findViewById(R.id.text_listitem_score_board_interval);
             TextView text_Result = (TextView) view.findViewById(R.id.text_listitem_score_board_result);
 
+            text_Id.setText(String.valueOf(i + 1));
+
             GameManager.ScoreNode node = this.scores.get(i);
-            text_Interval.setText(DateFormat.getDateInstance(DateFormat.SHORT).format(node.getInterval()));
+            long interval = node.getInterval();
+
+            text_Interval.setText(String.valueOf(interval / 1000) + "s");
 
             String result = null;
             if (node.getGameResult() == GameManager.GameResult.GAME_RESULT_LOST) {
-                result = "LOST";
+                result = "✖";
             } else if (node.getGameResult() == GameManager.GameResult.GAME_RESULT_WON) {
-                result = "WON";
+                result = "✔";
             } else {
-                result = "UNKNOWN";
+                result = "✖";
             }
 
             text_Result.setText(result);
