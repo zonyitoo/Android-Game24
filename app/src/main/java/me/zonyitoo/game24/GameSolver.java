@@ -27,25 +27,57 @@ public class GameSolver {
             Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_DIVIDE
     };
 
-    public static boolean isSolutionExists(Set<List<CardDealer.Card>> cardPermutes,
+    public static boolean isSolutionExists(List<CardDealer.Card> cards,
                                            List<List<Equation.EquationOperatorType>> opProducts, BigFraction target) {
+        ArrayList<CardDealer.Card> tmpCards = new ArrayList<CardDealer.Card>(cards);
+        Collections.sort(tmpCards); // Should be removed, because the cards should have been in order!
 
-        return isSolutionExistsSolver(cardPermutes, opProducts, target);
-    }
+        Log.d(LOG_TAG, "Finding solutions for " + cards);
 
-    private static boolean isSolutionExistsSolver(Set<List<CardDealer.Card>> cardPermutes,
-                                                  List<List<Equation.EquationOperatorType>> opProducts,
-                                                  BigFraction target) {
-        for (List<Equation.EquationOperatorType> ops : opProducts) {
-            for (List<CardDealer.Card> cards : cardPermutes) {
-                Set<BigFraction> result = enumerateAllSolution(ops, cards, 0, cards.size() - 1);
+        // TODO: Display the one solution
+
+        do {
+            for (List<Equation.EquationOperatorType> ops : opProducts) {
+                Set<BigFraction> result = enumerateAllSolution(ops, tmpCards, 0, cards.size() - 1);
                 if (result.contains(target)) {
+                    Log.d(LOG_TAG, "Found!");
                     return true;
                 }
             }
-        }
+        } while (nextPermutation(tmpCards));
+
+        Log.d(LOG_TAG, "Cannot found any solutions");
 
         return false;
+    }
+
+    private static boolean nextPermutation(List<CardDealer.Card> cards) {
+        if (cards.size() <= 1) {
+            return false;
+        }
+
+        int i = cards.size() - 1;
+        for (;;) {
+            int ii = i--;
+
+            if (cards.get(i).compareTo(cards.get(ii)) < 0) {
+                int j = cards.size();
+                while (cards.get(i).compareTo(cards.get(--j)) >= 0);
+
+                Collections.swap(cards, i, j);
+                for (int idx1 = ii, idx2 = cards.size() - 1; idx1 < idx2; ++idx1, --idx2) {
+                    Collections.swap(cards, idx1, idx2);
+                }
+                return true;
+            }
+
+            if (i == 0) {
+                for (int idx1 = 0, idx2 = cards.size() - 1; idx1 < idx2; ++idx1, --idx2) {
+                    Collections.swap(cards, idx1, idx2);
+                }
+                return false;
+            }
+        }
     }
 
     private static Set<BigFraction> enumerateAllSolution(List<Equation.EquationOperatorType> ops,

@@ -103,6 +103,7 @@ public class CardDealer {
         };
 
         cards = Arrays.asList(_cards);
+//        Collections.sort(cards);
         Collections.shuffle(cards);
     }
 
@@ -150,10 +151,7 @@ public class CardDealer {
 
         Log.d(LOG_TAG, "validateCardsCombination cards=" + c.toString());
 
-        // TODO: Use next lexicographical permutation algorithm will be better
-        Set<List<Card>> permuteCards = GameSolver.permuteCards(c);
-
-        boolean validateResult = GameSolver.isSolutionExists(permuteCards, OPERATOR_PRODUCTS,
+        boolean validateResult = GameSolver.isSolutionExists(c, OPERATOR_PRODUCTS,
                 BigFraction.valueOf(24));
         Log.d(LOG_TAG, "validateCardsCombination result=" + validateResult);
 
@@ -198,7 +196,7 @@ public class CardDealer {
         return false;
     }
 
-    public class Card {
+    public class Card implements Comparable<Card> {
         /**
          * Real card number
          */
@@ -248,6 +246,11 @@ public class CardDealer {
                         return "Card{Unknown}";
                 }
             }
+        }
+
+        @Override
+        public int compareTo(Card card) {
+            return this.getNumber() - card.getNumber();
         }
     }
 
