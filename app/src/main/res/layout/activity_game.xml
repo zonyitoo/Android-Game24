@@ -59,50 +59,50 @@
         android:id="@+id/layout_game_operator_panel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_marginBottom="10dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true">
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
 
         <ImageButton
             android:id="@+id/button_game_op_plus"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:scaleType="fitCenter"
             android:src="@drawable/button_game_operator_plus_selector"/>
 
         <ImageButton
             android:id="@+id/button_game_op_minus"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:scaleType="fitCenter"
             android:src="@drawable/button_game_operator_minus_selector"/>
 
         <ImageButton
             android:id="@+id/button_game_op_multiply"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:scaleType="fitCenter"
             android:src="@drawable/button_game_operator_multiply_selector"/>
 
         <ImageButton
             android:id="@+id/button_game_op_divide"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:scaleType="fitCenter"
             android:src="@drawable/button_game_operator_divide_selector"/>
 
         <ImageButton
             android:id="@+id/button_game_op_left_bracket"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:scaleType="fitCenter"
             android:src="@drawable/button_game_operator_left_bracket_selector"/>
 
         <ImageButton
             android:id="@+id/button_game_op_right_bracket"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:scaleType="fitCenter"
             android:src="@drawable/button_operator_right_bracket_selector"/>
 
@@ -124,7 +124,6 @@
             android:id="@+id/text_game_equation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="(1+2)*3+4"
             android:textSize="20dp"
             android:layout_weight="1"
             android:textColor="#ffffff"/>

@@ -1,5 +1,7 @@
 package me.zonyitoo.game24;
 
+import android.util.Log;
+
 import com.github.kiprobinson.util.BigFraction;
 
 import java.math.BigDecimal;
@@ -10,6 +12,8 @@ import java.util.Stack;
  * Created by zonyitoo on 14/10/7.
  */
 public class Equation {
+
+    public static final String LOG_TAG = Equation.class.getSimpleName();
 
     private int maxBracketLevel = -1;
     private int curBracketLevel = 0;
@@ -231,6 +235,9 @@ public class Equation {
                                     != EquationOperatorType.EQUATION_OPERATOR_TYPE_LEFT_BRACKET) {
                             rpn.add(rpn_opstack.pop());
                         }
+                        if (rpn_opstack.empty()) {
+                            throw new MalformedEquationException("Bracket mismatch");
+                        }
                         rpn_opstack.pop(); // pop the "("
                         break;
                 }
@@ -317,9 +324,22 @@ public class Equation {
         private EquationOperatorType type = EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS;
         private int priority;
 
-        public EquationOperator(EquationOperatorType t, int priority) {
+        public EquationOperator(EquationOperatorType t) {
             this.type = t;
-            this.priority = priority;
+
+            switch (t) {
+                case EQUATION_OPERATOR_TYPE_PLUS:
+                case EQUATION_OPERATOR_TYPE_MINUS:
+                    this.priority = 1;
+                    break;
+                case EQUATION_OPERATOR_TYPE_MULTIPLY:
+                case EQUATION_OPERATOR_TYPE_DIVIDE:
+                    this.priority = 2;
+                    break;
+                case EQUATION_OPERATOR_TYPE_LEFT_BRACKET:
+                case EQUATION_OPERATOR_TYPE_RIGHT_BRACKET:
+                    this.priority = 0;
+            }
         }
 
         public EquationOperatorType getType() {

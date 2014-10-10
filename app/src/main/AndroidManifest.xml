@@ -31,8 +31,8 @@
             
         </activity>
 
-        <activity android:name=".LeaderBoardActivity"
-            android:label="@string/string_LeaderBoard_label"
+        <activity android:name=".ScoreBoardActivity"
+            android:label="@string/string_ScoreBoard_label"
             android:screenOrientation="portrait"/>
 
     </application>

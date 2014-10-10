@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +29,8 @@ import java.util.List;
 import java.util.Random;
 
 public class GameActivity extends ActionBarActivity {
+
+    public static final String LOG_TAG = GameActivity.class.getSimpleName();
 
     static final int MAX_BRACKET_LEVEL = 3;
 
@@ -56,6 +59,8 @@ public class GameActivity extends ActionBarActivity {
     }
 
     GameStatus gameStatus = GameStatus.GAME_STATUS_RUNNING;
+
+    GameManager gameManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -177,24 +182,31 @@ public class GameActivity extends ActionBarActivity {
                     BigFraction result = equation.evaluate();
                     String s = textView_Equation.getText().toString();
 
+                    Log.d(LOG_TAG, "Equation " + equation.toString() + "=" + result);
+
                     if (result.equalsNumber(24)) {
                         s += "=" + 24;
                         gameStatus = GameStatus.GAME_STATUS_WON;
+
+                        gameManager.endGame(GameManager.GameResult.GAME_RESULT_WON);
 
                         freezeTheWorld();
                         button_Evaluate.setEnabled(true);
                     } else {
                         s = "<font color='red'>" + s + "≠" + 24 + "</font>";
                         gameStatus = GameStatus.GAME_STATUS_LOST;
+
+                        gameManager.endGame(GameManager.GameResult.GAME_RESULT_LOST);
+                        gameManager.startGame();
                     }
                     textView_Equation.setText(Html.fromHtml(s));
                 } catch (Equation.MalformedEquationException e) {
                     Toast.makeText(GameActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-
-
             }
         });
+
+        gameManager = new GameManager(this);
 
         restart();
 	}
@@ -306,6 +318,8 @@ public class GameActivity extends ActionBarActivity {
     }
 
     private void restart() {
+        gameManager.startGame();
+
         RestartAsyncTask restartAsyncTask = new RestartAsyncTask();
         restartAsyncTask.execute(dealer);
     }
@@ -353,7 +367,7 @@ public class GameActivity extends ActionBarActivity {
                 restart();
                 break;
             case R.id.menu_game_leader_board:
-                Intent intent = new Intent(this, LeaderBoardActivity.class);
+                Intent intent = new Intent(this, ScoreBoardActivity.class);
                 startActivity(intent);
                 break;
             default:
@@ -424,32 +438,32 @@ public class GameActivity extends ActionBarActivity {
                     case R.id.button_game_op_plus:
                         equation.add(
                                 new Equation.EquationOperator(
-                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS, 1));
+                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS));
                         break;
                     case R.id.button_game_op_minus:
                         equation.add(
                                 new Equation.EquationOperator(
-                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MINUS, 1));
+                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MINUS));
                         break;
                     case R.id.button_game_op_multiply:
                         equation.add(
                                 new Equation.EquationOperator(
-                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MULTIPLY, 2));
+                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MULTIPLY));
                         break;
                     case R.id.button_game_op_divide:
                         equation.add(
                                 new Equation.EquationOperator(
-                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_DIVIDE, 2));
+                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_DIVIDE));
                         break;
                     case R.id.button_game_op_left_bracket:
                         equation.add(
                                 new Equation.EquationOperator(
-                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_LEFT_BRACKET, 0));
+                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_LEFT_BRACKET));
                         break;
                     case R.id.button_game_op_right_bracket:
                         equation.add(
                                 new Equation.EquationOperator(
-                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_RIGHT_BRACKET, 0));
+                                        Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_RIGHT_BRACKET));
                         break;
                 }
             } catch (Equation.MalformedEquationException e) {

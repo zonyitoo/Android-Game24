@@ -15,6 +15,6 @@
     <string name="string_Game_Should_Use_All_Cards">You should use all cards</string>
     <string name="string_Game_Dealing_Cards">Dealing cards</string>
 
-    <string name="string_LeaderBoard_label">Leader board</string>
+    <string name="string_ScoreBoard_label">Score board</string>
 
 </resources>
