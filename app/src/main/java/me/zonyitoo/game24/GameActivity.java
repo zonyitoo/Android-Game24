@@ -1,9 +1,11 @@
 package me.zonyitoo.game24;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.StateListDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -46,6 +48,14 @@ public class GameActivity extends ActionBarActivity {
     int nSelectedCards = 0;
 
     Animation[] anim_Cards;
+
+    private enum GameStatus {
+        GAME_STATUS_RUNNING,
+        GAME_STATUS_WON,
+        GAME_STATUS_LOST
+    }
+
+    GameStatus gameStatus = GameStatus.GAME_STATUS_RUNNING;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +100,10 @@ public class GameActivity extends ActionBarActivity {
         button_BackSpace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (gameStatus != GameStatus.GAME_STATUS_RUNNING) {
+                    gameStatus = GameStatus.GAME_STATUS_RUNNING;
+                }
+
                 Equation.EquationNode node = equation.pop();
 
                 if (equation.isEmpty()) {
@@ -111,19 +125,16 @@ public class GameActivity extends ActionBarActivity {
         button_BackSpace.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
+                if (gameStatus != GameStatus.GAME_STATUS_RUNNING) {
+                    gameStatus = GameStatus.GAME_STATUS_RUNNING;
+                }
+
                 if (equation.isEmpty()) {
                     return false;
                 }
 
-                equation.clear();
-                pressedButtonBuffer.clear();
+                clearEquation();
 
-                for (ImageButton b : button_Cards) {
-                    b.setEnabled(true);
-                }
-
-                nSelectedCards = 0;
-                refreshEquationView();
                 view.setEnabled(false);
                 return true;
             }
@@ -146,6 +157,15 @@ public class GameActivity extends ActionBarActivity {
         button_Evaluate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (gameStatus == GameStatus.GAME_STATUS_LOST) {
+                    gameStatus = GameStatus.GAME_STATUS_RUNNING;
+                    clearEquation();
+                    return;
+                } else if (gameStatus == GameStatus.GAME_STATUS_WON) {
+                    restart();
+                    return;
+                }
+
                 if (nSelectedCards < 4) {
                     Toast.makeText(GameActivity.this,
                             R.string.string_Game_Should_Use_All_Cards, Toast.LENGTH_SHORT)
@@ -159,21 +179,37 @@ public class GameActivity extends ActionBarActivity {
 
                     if (result.equalsNumber(24)) {
                         s += "=" + 24;
+                        gameStatus = GameStatus.GAME_STATUS_WON;
+
+                        freezeTheWorld();
+                        button_Evaluate.setEnabled(true);
                     } else {
                         s = "<font color='red'>" + s + "≠" + 24 + "</font>";
+                        gameStatus = GameStatus.GAME_STATUS_LOST;
                     }
                     textView_Equation.setText(Html.fromHtml(s));
                 } catch (Equation.MalformedEquationException e) {
-                    textView_Equation.setText(
-                            Html.fromHtml("<font color='red'>" + e.getMessage() + "</font>"));
+                    Toast.makeText(GameActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
-                freezeTheWorld();
+
             }
         });
 
         restart();
 	}
+
+    private void clearEquation() {
+        equation.clear();
+        pressedButtonBuffer.clear();
+
+        for (ImageButton b : button_Cards) {
+            b.setEnabled(true);
+        }
+
+        nSelectedCards = 0;
+        refreshEquationView();
+    }
 
     private void freezeTheWorld() {
         for (ImageButton cbtn : this.button_Cards) {
@@ -199,40 +235,79 @@ public class GameActivity extends ActionBarActivity {
         button_Evaluate.setEnabled(true);
     }
 
-    private void restart() {
-        showingCards = dealer.deal();
+    /**
+     * Because of validating may be very time consuming, so I make it as a AsyncTask.
+     */
+    class RestartAsyncTask extends AsyncTask<CardDealer, Void, List<CardDealer.Card>> {
 
-        for (int i = 0; i < showingCards.size(); ++i) {
-            ImageButton curBtn = this.button_Cards[i];
+        ProgressDialog progressDialog;
 
-            StateListDrawable states = new StateListDrawable();
-            states.addState(new int[] {android.R.attr.state_enabled},
-                    showingCards.get(i).getImageDrawable());
-            states.addState(new int[] {},
-                    getResources().getDrawable(R.drawable.card_back));
-            if (Build.VERSION.SDK_INT >= 16) {
-                curBtn.setBackground(states);
-            } else {
-                curBtn.setBackgroundDrawable(states); // For backward capability.
+        @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(GameActivity.this);
+            progressDialog.setTitle(R.string.string_Game_Dealing_Cards);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.show();
+
+            freezeTheWorld();
+
+            super.onPreExecute();
+        }
+
+        @Override
+        protected List<CardDealer.Card> doInBackground(CardDealer... cardDealers) {
+            return cardDealers[0].deal();
+        }
+
+        @Override
+        protected void onPostExecute(List<CardDealer.Card> cards) {
+            GameActivity.this.showingCards = cards;
+
+            for (int i = 0; i < showingCards.size(); ++i) {
+                ImageButton curBtn = GameActivity.this.button_Cards[i];
+
+                StateListDrawable states = new StateListDrawable();
+                states.addState(new int[] {android.R.attr.state_enabled},
+                        showingCards.get(i).getImageDrawable());
+                states.addState(new int[] {},
+                        getResources().getDrawable(R.drawable.card_back));
+                if (Build.VERSION.SDK_INT >= 16) {
+                    curBtn.setBackground(states);
+                } else {
+                    curBtn.setBackgroundDrawable(states); // For backward capability.
+                }
             }
+
+            Random random = new Random();
+            for (int i = 0; i < button_Cards.length; ++i) {
+                button_Cards[i].startAnimation(anim_Cards[i]);
+                // Rotate random angle
+                button_Cards[i].setRotation(random.nextFloat() * 360.0f);
+            }
+
+            unfreezeTheWorld();
+
+            textView_Equation.setText("");
+            equation.clear();
+
+            pressedButtonBuffer.clear();
+            nSelectedCards = 0;
+
+            button_BackSpace.setEnabled(false);
+
+            gameStatus = GameStatus.GAME_STATUS_RUNNING;
+
+            progressDialog.dismiss();
+
+            super.onPostExecute(cards);
         }
+    }
 
-        Random random = new Random();
-        for (int i = 0; i < button_Cards.length; ++i) {
-            button_Cards[i].startAnimation(anim_Cards[i]);
-            // Rotate random angle
-            button_Cards[i].setRotation(random.nextFloat() * 360.0f);
-        }
-
-        unfreezeTheWorld();
-
-        textView_Equation.setText("");
-        equation.clear();
-
-        pressedButtonBuffer.clear();
-        nSelectedCards = 0;
-
-        button_BackSpace.setEnabled(false);
+    private void restart() {
+        RestartAsyncTask restartAsyncTask = new RestartAsyncTask();
+        restartAsyncTask.execute(dealer);
     }
 
     private void refreshEquationView() {

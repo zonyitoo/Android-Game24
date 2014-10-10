@@ -13,6 +13,7 @@
     <string name="string_Game_Bracket_Level_Exceeded">Bracket level exceeded</string>
     <string name="string_Game_Bracket_Mismatch">Bracket mismatch</string>
     <string name="string_Game_Should_Use_All_Cards">You should use all cards</string>
+    <string name="string_Game_Dealing_Cards">Dealing cards</string>
 
     <string name="string_LeaderBoard_label">Leader board</string>
 

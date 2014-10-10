@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.github.kiprobinson.util.BigFraction;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,6 +18,8 @@ import java.util.Random;
  */
 public class CardDealer {
 
+    public static final String LOG_TAG = CardDealer.class.getSimpleName();
+
     private static final int LRU_MAX_CAPACITY = 20;
 
     Context context;
@@ -23,6 +27,15 @@ public class CardDealer {
 
     List<Card> cards;
 
+    /**
+     * Construct a new card dealer. <br/>
+     *
+     * This constructor will enumerate 52 poker cards' resource id and
+     * store its' real representing number in 24 game. But it will not
+     * load the image right now. <br/>
+     *
+     * @param context android context
+     */
     public CardDealer(Context context) {
         this.context = context;
 
@@ -89,6 +102,17 @@ public class CardDealer {
         Collections.shuffle(cards);
     }
 
+    /**
+     * Sampling 4 cards randomly from the card set. <br/>
+     *
+     * This function will also try to validate the 4 cards. If there is no
+     * solution, it will repeat the procedure again until finding a card set
+     * that has at least one solutions. <br/>
+     *
+     * @see me.zonyitoo.game24.CardDealer.Card
+     *
+     * @return 4 cards
+     */
     public List<Card> deal() {
         ArrayList<Card> c = new ArrayList<Card>();
         Random r = new Random();
@@ -106,22 +130,81 @@ public class CardDealer {
 
         } while (!validateCardsCombination(c));
 
-        Log.d("GAME", c.toString());
-
         return c;
     }
 
+    /**
+     * Validate the sampled 4 cards by finding at least one 24 game solutions.
+     *
+     * @param c 4 cards for validation
+     * @return has solutions or not
+     */
     private boolean validateCardsCombination(ArrayList<Card> c) {
+        if (c.size() != 4) {
+            return false;
+        }
 
         // TODO: find at least one solution
 
-        return true;
+        Log.d(LOG_TAG, "validateCardsCombination cards=" + c.toString());
+
+        boolean validateResult = GameSolver.isSolutionExists(c, BigFraction.valueOf(24));
+        Log.d(LOG_TAG, "validateCardsCombination result=" + validateResult);
+
+        return validateResult;
+    }
+
+    private boolean validateCardsCombinationSolver(ArrayList<Card> c, boolean[] visited,
+                                                   int remainNumber, BigFraction curResult) {
+        if (remainNumber == 0) {
+            return curResult.equalsNumber(24);
+        }
+
+        for (int i = 0; i < c.size(); ++i) {
+            if (!visited[i]) {
+                visited[i] = true;
+
+                BigFraction thisNumber = BigFraction.valueOf(c.get(i).getNumber());
+                if (validateCardsCombinationSolver(c, visited, remainNumber - 1,
+                        curResult.add(thisNumber))) {
+                    return true;
+                } else if (validateCardsCombinationSolver(c, visited, remainNumber - 1,
+                        curResult.subtract(thisNumber))) {
+                    return true;
+                } else if (validateCardsCombinationSolver(c, visited, remainNumber - 1,
+                        thisNumber.subtract(curResult))) {
+                    return true;
+                } else if (validateCardsCombinationSolver(c, visited, remainNumber - 1,
+                        curResult.multiply(thisNumber))) {
+                    return true;
+                } else if (validateCardsCombinationSolver(c, visited, remainNumber - 1,
+                        curResult.divide(thisNumber))) {
+                    return true;
+                } else if (validateCardsCombinationSolver(c, visited, remainNumber - 1,
+                        thisNumber.divide(curResult))) {
+                    return true;
+                }
+
+                visited[i] = false;
+            }
+        }
+
+        return false;
     }
 
     public class Card {
+        /**
+         * Real card number
+         */
         private int number;
+        /**
+         * Card image's resource ID
+         */
         private int resourceId;
 
+        /**
+         * Reference of the CardDealer
+         */
         private CardDealer dealer;
 
         public Card(CardDealer dealer, int resourceId, int number) {
@@ -134,11 +217,40 @@ public class CardDealer {
             return number;
         }
 
+        /**
+         * Get drawable from the LRU cache
+         *
+         * @return Card image
+         */
         public Drawable getImageDrawable() {
             return dealer.getCardImageDrawableById(this.resourceId);
         }
+
+        @Override
+        public String toString() {
+            if (getNumber() < 11) {
+                return "Card{" + getNumber() + "}";
+            } else {
+                switch (getNumber()) {
+                    case 11:
+                        return "Card{J}";
+                    case 12:
+                        return "Card{Q}";
+                    case 13:
+                        return "Card{K}";
+                    default:
+                        return "Card{Unknown}";
+                }
+            }
+        }
     }
 
+    /**
+     * Get card drawable from the LRU cache
+     *
+     * @param id resource ID
+     * @return drawable
+     */
     public Drawable getCardImageDrawableById(int id) {
         if (cache.containsKey(id)) {
             return (Drawable) cache.get(id);
@@ -149,6 +261,9 @@ public class CardDealer {
         }
     }
 
+    /**
+     * A LRU cache for storing card image.
+     */
     protected class LRUCardCache extends LinkedHashMap<Integer, Object> {
 
         private int maxCapacity;

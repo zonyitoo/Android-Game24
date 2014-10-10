@@ -29,6 +29,11 @@ public class Equation {
 
     }
 
+    /**
+     * Construct a new Equation object.
+     *
+     * @param maxBracketLevel max bracket level. -1 indicates infinite level
+     */
     public Equation(int maxBracketLevel) {
         this.maxBracketLevel = maxBracketLevel;
     }
@@ -39,6 +44,11 @@ public class Equation {
         curBracketLevel = 0;
     }
 
+    /**
+     * Generate a formula string to represent the equation.
+     *
+     * @return Formula string, such as (1+2)*3+4
+     */
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
@@ -48,6 +58,15 @@ public class Equation {
         return b.toString();
     }
 
+    /**
+     * Add a EquationNode into the Equation. <br/>
+     *
+     * It uses a simple state machine for ensuring the equation is in valid
+     * form.
+     *
+     * @param node the node for appending into the equation
+     * @throws MalformedEquationException if the node is not expected
+     */
     public void add(EquationNode node) throws MalformedEquationException {
         if (node instanceof EquationOperator) {
             switch (((EquationOperator) node).getType()) {
@@ -101,6 +120,11 @@ public class Equation {
         currentInputBuffer.add(node);
     }
 
+    /**
+     * Pop the last node of the equation.
+     *
+     * @return the popped node
+     */
     public EquationNode pop() {
         EquationNode n = currentInputBuffer.get(currentInputBuffer.size() - 1);
         currentInputBuffer.remove(currentInputBuffer.size() - 1);
@@ -148,6 +172,20 @@ public class Equation {
         return currentInputBuffer.isEmpty();
     }
 
+    /**
+     * Evaluate the equation and get the result. <br/>
+     *
+     * This function current use the following steps to evaluate the equation: <br/>
+     *
+     *     1. Convert the equation from Infix notation to Reverse Polish notation <br/>
+     *     2. Evaluate the result by using the Reverse Polish notation <br/>
+     *
+     * And it uses <code>BigFraction</code> for calculation, which means that it will not
+     * lose precision during calculation.
+     *
+     * @return the result of the equation
+     * @throws MalformedEquationException if equation is malformed
+     */
     public BigFraction evaluate() throws MalformedEquationException {
         if (parsingState == State.STATE_INIT)
             return BigFraction.ZERO;
@@ -266,8 +304,14 @@ public class Equation {
         EQUATION_OPERATOR_TYPE_RIGHT_BRACKET
     }
 
+    /**
+     * Base class for representing the basic component of an equation.
+     */
     public static abstract class EquationNode {}
 
+    /**
+     * Operator node
+     */
     public static class EquationOperator extends EquationNode {
 
         private EquationOperatorType type = EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS;
@@ -306,6 +350,10 @@ public class Equation {
         }
     }
 
+    /**
+     * Operand node
+     * @param <T> is the real numerical type of the operand
+     */
     public static class EquationOperand<T extends Number> extends EquationNode {
         private T data;
         public EquationOperand(T data) {
