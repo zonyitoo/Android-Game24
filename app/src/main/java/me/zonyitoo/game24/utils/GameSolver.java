@@ -87,43 +87,31 @@ public class GameSolver {
         } else if (from > to) {
             results.add(BigFraction.ZERO);
             return results;
+        } else if (from + 1 == to) {
+            BigFraction r = evaluateValue(
+                    BigFraction.valueOf(cards.get(from).getNumber()),
+                    BigFraction.valueOf(cards.get(to).getNumber()),
+                    ops.get(from));
+            results.add(r);
+            return results;
         }
 
-        for (int i = from; i < to; ++i) {
-            Set<BigFraction> leftres = enumerateAllSolution(ops, cards, from, i - 1);
-            Set<BigFraction> rightres = enumerateAllSolution(ops, cards, i + 2, to);
+        for (int opidx = from; opidx < to; ++opidx) {
+            // (...) op (...)
+            
+            Set<BigFraction> leftResults = enumerateAllSolution(ops, cards, from, opidx);
+            Set<BigFraction> rightResults = enumerateAllSolution(ops, cards, opidx + 1, to);
 
-            Equation.EquationOperatorType
-                    leftop = (i != 0) ? ops.get(i - 1)
-                                      : Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS,
-                    rightop = (i != ops.size() - 1) ? ops.get(i + 1)
-                                      : Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS,
-                    curop = ops.get(i);
-
-            BigFraction operand1 = BigFraction.valueOf(cards.get(i).getNumber());
-            BigFraction operand2 = BigFraction.valueOf(cards.get(i + 1).getNumber());
-            BigFraction curres = evaluateValue(operand1, operand2, curop);
-
-            for (BigFraction lresult : leftres) {
-                for (BigFraction rresult : rightres) {
+            for (BigFraction l : leftResults) {
+                for (BigFraction r : rightResults) {
                     try {
-                        BigFraction r = evaluateValue(lresult, curres, leftop);
-                        r = evaluateValue(r, rresult, rightop);
-                        results.add(r);
-                    } catch (Exception ignore) {
-                        // Just ignore the error case
-                    }
-
-                    try {
-                        BigFraction r = evaluateValue(curres, rresult, rightop);
-                        r = evaluateValue(lresult, r, leftop);
-                        results.add(r);
-                    } catch (Exception ignore) {
-                        // Just ignore the error case
+                        BigFraction ans = evaluateValue(l, r, ops.get(opidx));
+                        results.add(ans);
+                    } catch (ArithmeticException ignored) {
+                        // Ignore the error cases
                     }
                 }
             }
-
         }
 
         return results;

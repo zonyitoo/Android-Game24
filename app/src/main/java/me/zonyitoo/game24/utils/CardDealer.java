@@ -160,7 +160,7 @@ public class CardDealer {
         return validateResult;
     }
 
-    public class Card implements Comparable<Card> {
+    public static class Card implements Comparable<Card> {
         /**
          * Real card number
          */

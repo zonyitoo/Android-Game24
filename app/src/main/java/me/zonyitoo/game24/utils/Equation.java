@@ -374,6 +374,11 @@ public class Equation {
 
             return null;
         }
+
+        @Override
+        public boolean equals(Object op) {
+            return op instanceof EquationOperator && getType().equals(((EquationOperator) op).getType());
+        }
     }
 
     /**
@@ -392,6 +397,14 @@ public class Equation {
 
         public String toString() {
             return String.valueOf(data);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof EquationOperand) {
+                return getData().equals(((EquationOperand) o).getData());
+            }
+            return false;
         }
     }
 
