@@ -128,7 +128,7 @@ public class ScoreBoardActivity extends ActionBarActivity {
         public View getView(int i, View view, ViewGroup viewGroup) {
             if (view == null) {
                 view = LayoutInflater.from(context).
-                		inflate(R.layout.listitem_score_board_scores, list_Scores);
+                		inflate(R.layout.listitem_score_board_scores, null);
             }
 
             TextView text_Id = (TextView) view.findViewById(R.id.text_listitem_score_board_id);
@@ -144,11 +144,11 @@ public class ScoreBoardActivity extends ActionBarActivity {
 
             String result = null;
             if (node.getGameResult() == GameManager.GameResult.GAME_RESULT_LOST) {
-                result = "✖";
+                result = "\u2716"; // Cross
             } else if (node.getGameResult() == GameManager.GameResult.GAME_RESULT_WON) {
-                result = "✔";
+                result = "\u2714"; // Tick
             } else {
-                result = "✖";
+                result = "\u2716"; // Cross
             }
 
             text_Result.setText(result);

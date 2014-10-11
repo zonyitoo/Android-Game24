@@ -363,9 +363,9 @@ public class Equation {
                 case EQUATION_OPERATOR_TYPE_MINUS:
                     return "-";
                 case EQUATION_OPERATOR_TYPE_MULTIPLY:
-                    return "×";
+                    return "\u00D7"; // The multiply symbol
                 case EQUATION_OPERATOR_TYPE_DIVIDE:
-                    return "÷";
+                    return "\u00F7"; // The divide symbol
                 case EQUATION_OPERATOR_TYPE_LEFT_BRACKET:
                     return "(";
                 case EQUATION_OPERATOR_TYPE_RIGHT_BRACKET:

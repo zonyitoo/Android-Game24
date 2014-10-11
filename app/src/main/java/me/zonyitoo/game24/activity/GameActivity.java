@@ -198,7 +198,8 @@ public class GameActivity extends ActionBarActivity {
                         freezeTheWorld();
                         button_Evaluate.setEnabled(true);
                     } else {
-                        s = "<font color='red'>" + s + "≠" + 24 + "</font>";
+                        s = "<font color='red'>" + s + "\u2260" // A not-equal symbol
+                                + 24 + "</font>";
                         gameStatus = GameStatus.GAME_STATUS_LOST;
 
                         gameManager.endGame(GameManager.GameResult.GAME_RESULT_LOST);
