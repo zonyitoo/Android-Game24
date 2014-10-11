@@ -158,44 +158,6 @@ public class CardDealer {
         return validateResult;
     }
 
-    private boolean validateCardsCombinationSolver(ArrayList<Card> c, boolean[] visited,
-                                                   int remainNumber, BigFraction curResult) {
-        if (remainNumber == 0) {
-            return curResult.equalsNumber(24);
-        }
-
-        for (int i = 0; i < c.size(); ++i) {
-            if (!visited[i]) {
-                visited[i] = true;
-
-                BigFraction thisNumber = BigFraction.valueOf(c.get(i).getNumber());
-                if (validateCardsCombinationSolver(c, visited, remainNumber - 1,
-                        curResult.add(thisNumber))) {
-                    return true;
-                } else if (validateCardsCombinationSolver(c, visited, remainNumber - 1,
-                        curResult.subtract(thisNumber))) {
-                    return true;
-                } else if (validateCardsCombinationSolver(c, visited, remainNumber - 1,
-                        thisNumber.subtract(curResult))) {
-                    return true;
-                } else if (validateCardsCombinationSolver(c, visited, remainNumber - 1,
-                        curResult.multiply(thisNumber))) {
-                    return true;
-                } else if (validateCardsCombinationSolver(c, visited, remainNumber - 1,
-                        curResult.divide(thisNumber))) {
-                    return true;
-                } else if (validateCardsCombinationSolver(c, visited, remainNumber - 1,
-                        thisNumber.divide(curResult))) {
-                    return true;
-                }
-
-                visited[i] = false;
-            }
-        }
-
-        return false;
-    }
-
     public class Card implements Comparable<Card> {
         /**
          * Real card number

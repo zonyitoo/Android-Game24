@@ -3,6 +3,7 @@ package me.zonyitoo.game24;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,27 +32,37 @@ public class SplashActivity extends Activity implements OnClickListener {
 	public void onClick(View arg0) {
         Button b = (Button) arg0;
         b.setEnabled(false);
-
-        ProgressDialog d = new ProgressDialog(this);
-        dialogLoading = d;
-        d.setTitle(R.string.string_Splash_Loading);
-        d.setIndeterminate(true);
-        d.setCancelable(false);
-        d.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        d.show();
-
-		Intent intent = new Intent(this, GameActivity.class);
-		startActivity(intent);
-
-        finish();
+        new SwitchingActivityAsyncTask().execute();
 	}
 
-    @Override
-    protected void onStop() {
-        if (dialogLoading != null) {
-            dialogLoading.dismiss();
+    private class SwitchingActivityAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Intent intent = new Intent(SplashActivity.this, GameActivity.class);
+            startActivity(intent);
+
+            return null;
         }
 
-        super.onStop();
+        @Override
+        protected void onPreExecute() {
+            ProgressDialog d = new ProgressDialog(SplashActivity.this);
+            dialogLoading = d;
+            d.setTitle(R.string.string_Splash_Loading);
+            d.setIndeterminate(true);
+            d.setCancelable(false);
+            d.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            d.show();
+
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            dialogLoading.dismiss();
+            SplashActivity.this.finish();
+
+            super.onPostExecute(aVoid);
+        }
     }
 }

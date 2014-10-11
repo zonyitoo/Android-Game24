@@ -107,7 +107,7 @@ public class Equation {
                             || parsingState == State.STATE_OPERAND) {
                         parsingState = State.STATE_OPERATOR;
                     } else {
-                        throw new MalformedEquationException("Not expecting a operator");
+                        throw new MalformedEquationException("Not expecting an operator");
                     }
                     break;
             }

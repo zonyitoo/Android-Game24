@@ -2,7 +2,10 @@
 
 This is a course project for COMP7506_1A_2014.
 
-**Created by: Yuteng ZHONG (3035169867)**
+**Copyright by: Yuteng ZHONG (3035169867)**
+
+To my classmates: If you see these codes before the deadline, please feel free to read the code,
+but **DO NOT COPY**.
 
 ## Build
 
