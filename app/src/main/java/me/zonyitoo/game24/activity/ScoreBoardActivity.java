@@ -104,7 +104,7 @@ public class ScoreBoardActivity extends ActionBarActivity {
         private Context context;
         private ArrayList<GameManager.ScoreNode> scores;
 
-        ScoreListAdapter(Context context, ArrayList<GameManager.ScoreNode> scores) {
+        public ScoreListAdapter(Context context, ArrayList<GameManager.ScoreNode> scores) {
             this.context = context;
             this.scores = scores;
         }
