@@ -1,4 +1,4 @@
-package me.zonyitoo.game24;
+package me.zonyitoo.game24.utils;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -49,6 +49,8 @@ public class GameDBHelper extends SQLiteOpenHelper {
                 return SCORE_RESULT_WON;
             case GAME_RESULT_LOST:
                 return SCORE_RESULT_LOST;
+            default:
+            	break;
         }
         return SCORE_RESULT_UNKNOWN;
     }

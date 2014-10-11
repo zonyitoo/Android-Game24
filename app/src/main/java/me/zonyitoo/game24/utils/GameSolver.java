@@ -1,17 +1,14 @@
-package me.zonyitoo.game24;
-
-import android.support.annotation.FractionRes;
-import android.util.Log;
-
-import com.github.kiprobinson.util.BigFraction;
+package me.zonyitoo.game24.utils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import android.util.Log;
+
+import com.github.kiprobinson.util.BigFraction;
 
 /**
  * Created by zonyitoo on 14/10/10.
@@ -143,6 +140,8 @@ public class GameSolver {
                 return a.multiply(b);
             case EQUATION_OPERATOR_TYPE_DIVIDE:
                 return a.divide(b);
+            default:
+            	break;
         }
         throw new ArithmeticException("Invalid operator");
     }

@@ -1,4 +1,4 @@
-package me.zonyitoo.game24;
+package me.zonyitoo.game24.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+
+import me.zonyitoo.game24.R;
 
 public class SplashActivity extends Activity implements OnClickListener {
 	

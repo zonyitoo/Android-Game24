@@ -1,12 +1,10 @@
-package me.zonyitoo.game24;
-
-import android.util.Log;
-
-import com.github.kiprobinson.util.BigFraction;
+package me.zonyitoo.game24.utils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Stack;
+
+import com.github.kiprobinson.util.BigFraction;
 
 /**
  * Created by zonyitoo on 14/10/7.
@@ -141,7 +139,8 @@ public class Equation {
                 case EQUATION_OPERATOR_TYPE_RIGHT_BRACKET:
                     ++curBracketLevel;
                     break;
-
+                default:
+                	break;
             }
         }
 
@@ -257,7 +256,7 @@ public class Equation {
         Stack<BigFraction> rpn_valstack = new Stack<BigFraction>();
         for (EquationNode node : rpn) {
             if (node instanceof EquationOperand) {
-                Number val = ((EquationOperand) node).getData();
+                Number val = ((EquationOperand<?>) node).getData();
                 rpn_valstack.push(BigFraction.valueOf(val));
             } else {
                 if (rpn_valstack.size() < 2) {
@@ -284,6 +283,8 @@ public class Equation {
                         }
                         result = val1.divide(val2);
                         break;
+                    default:
+                    	break;
                 }
                 rpn_valstack.push(result);
             }
@@ -297,7 +298,12 @@ public class Equation {
     }
 
     public static class MalformedEquationException extends Exception {
-        public MalformedEquationException(String message) {
+        /**
+		 * Make the compiler happy.
+		 */
+		private static final long serialVersionUID = 1L;
+
+		public MalformedEquationException(String message) {
             super(message);
         }
     }

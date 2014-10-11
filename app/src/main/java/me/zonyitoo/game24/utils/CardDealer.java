@@ -1,10 +1,4 @@
-package me.zonyitoo.game24;
-
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-
-import com.github.kiprobinson.util.BigFraction;
+package me.zonyitoo.game24.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +6,15 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
+
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
+
+import com.github.kiprobinson.util.BigFraction;
+
+import me.zonyitoo.game24.R;
+
 
 /**
  * Created by zonyitoo on 14/10/7.
@@ -114,7 +116,7 @@ public class CardDealer {
      * solution, it will repeat the procedure again until finding a card set
      * that has at least one solutions. <br/>
      *
-     * @see me.zonyitoo.game24.CardDealer.Card
+     * @see me.zonyitoo.game24.utils.CardDealer.Card
      *
      * @return 4 cards
      */
@@ -237,7 +239,12 @@ public class CardDealer {
      */
     protected class LRUCardCache extends LinkedHashMap<Integer, Object> {
 
-        private int maxCapacity;
+        /**
+		 * Make the compiler happy.
+		 */
+		private static final long serialVersionUID = 42L;
+
+		private int maxCapacity;
 
         private static final float DEFAULT_LOAD_FACTOR = 0.75f;
 

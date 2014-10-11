@@ -1,11 +1,8 @@
-package me.zonyitoo.game24;
+package me.zonyitoo.game24.utils;
+
+import java.util.Date;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Just a simple class for remembering the user's score. <br/>
@@ -27,13 +24,13 @@ public class GameManager {
         private Date endDate;
         private GameResult result;
 
-        ScoreNode(Date startDate) {
+        public ScoreNode(Date startDate) {
             this.startDate = startDate;
             this.endDate = null;
             this.result = GameResult.GAME_RESULT_UNKNOWN;
         }
 
-        ScoreNode(Date startDate, Date endDate, GameResult result) {
+        public ScoreNode(Date startDate, Date endDate, GameResult result) {
             this.startDate = startDate;
             this.endDate = endDate;
             this.result = result;
@@ -93,6 +90,8 @@ public class GameManager {
             case GAME_RESULT_LOST:
                 nLostGame++;
                 break;
+			default:
+				break;
         }
 
         currentNode.endDate = new Date();

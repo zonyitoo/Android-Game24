@@ -1,5 +1,15 @@
-package me.zonyitoo.game24;
+package me.zonyitoo.game24.activity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+
+import me.zonyitoo.game24.R;
+import me.zonyitoo.game24.utils.CardDealer;
+import me.zonyitoo.game24.utils.Equation;
+import me.zonyitoo.game24.utils.GameManager;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -22,11 +32,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.kiprobinson.util.BigFraction;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
 
 public class GameActivity extends ActionBarActivity {
 
@@ -273,6 +278,8 @@ public class GameActivity extends ActionBarActivity {
             return cardDealers[0].deal();
         }
 
+        @SuppressWarnings("deprecation")
+		@SuppressLint("NewApi")
         @Override
         protected void onPostExecute(List<CardDealer.Card> cards) {
             GameActivity.this.showingCards = cards;
@@ -374,7 +381,6 @@ public class GameActivity extends ActionBarActivity {
                 return super.onOptionsItemSelected(item);
         }
 
-        super.onOptionsItemSelected(item);
         return true;
     }
 

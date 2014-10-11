@@ -1,5 +1,11 @@
-package me.zonyitoo.game24;
+package me.zonyitoo.game24.activity;
 
+import java.util.ArrayList;
+import java.util.Date;
+
+import me.zonyitoo.game24.R;
+import me.zonyitoo.game24.utils.GameDBHelper;
+import me.zonyitoo.game24.utils.GameManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,14 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
-
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by zonyitoo on 14/10/9.
@@ -128,7 +127,8 @@ public class ScoreBoardActivity extends ActionBarActivity {
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             if (view == null) {
-                view = LayoutInflater.from(context).inflate(R.layout.listitem_score_board_scores, null);
+                view = LayoutInflater.from(context).
+                		inflate(R.layout.listitem_score_board_scores, list_Scores);
             }
 
             TextView text_Id = (TextView) view.findViewById(R.id.text_listitem_score_board_id);
