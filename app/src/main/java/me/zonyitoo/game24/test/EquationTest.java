@@ -1,7 +1,6 @@
 package me.zonyitoo.game24.test;
 
 import android.test.AndroidTestCase;
-import android.util.Log;
 
 import com.github.kiprobinson.util.BigFraction;
 
