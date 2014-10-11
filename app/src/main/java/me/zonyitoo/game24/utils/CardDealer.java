@@ -3,6 +3,7 @@ package me.zonyitoo.game24.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
@@ -124,6 +125,7 @@ public class CardDealer {
         ArrayList<Card> c = new ArrayList<Card>();
         Random r = new Random();
 
+        final Date begTime = new Date();
         do {
 
             c.clear();
@@ -136,6 +138,10 @@ public class CardDealer {
             }
 
         } while (!validateCardsCombination(c));
+
+        final Date endTime = new Date();
+        Log.d(LOG_TAG, "Spent " + (endTime.getTime() - begTime.getTime())
+                + "ms on dealing cards");
 
         return c;
     }

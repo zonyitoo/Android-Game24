@@ -7,6 +7,7 @@ import com.github.kiprobinson.util.BigFraction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import me.zonyitoo.game24.utils.Equation;
@@ -24,7 +25,6 @@ public class EquationTest extends AndroidTestCase {
         ArrayList<Equation.EquationNode> result = new ArrayList<Equation.EquationNode>();
 
         for (int idx = 0; idx < input.length(); ) {
-            System.out.println(idx + " " + result);
             switch (input.charAt(idx)) {
                 case '+':
                     result.add(new Equation.EquationOperator(
@@ -109,14 +109,28 @@ public class EquationTest extends AndroidTestCase {
     }
 
     public void testEvaluationAlgorithm() throws Exception {
-        List<Equation.EquationNode> expr = parseExpression("1+2*(3-4)/5-6");
 
-        Equation equation = new Equation();
-        for (Equation.EquationNode node : expr) {
-            equation.add(node);
+        HashMap<String, BigFraction> expectedValues = new HashMap<String, BigFraction>();
+        expectedValues.put("1+2*(3-4)/5-6", BigFraction.valueOf(-27, 5));
+        expectedValues.put("1", BigFraction.valueOf(1));
+        expectedValues.put("1+1", BigFraction.valueOf(2));
+        expectedValues.put("2*2", BigFraction.valueOf(4));
+        expectedValues.put("3-2", BigFraction.valueOf(1));
+        expectedValues.put("4/2", BigFraction.valueOf(2));
+        expectedValues.put("1+2*3", BigFraction.valueOf(7));
+        expectedValues.put("(1+2)*3", BigFraction.valueOf(9));
+        expectedValues.put("1+2+3", BigFraction.valueOf(6));
+
+        for (String exprStr : expectedValues.keySet()) {
+            List<Equation.EquationNode> expr = parseExpression(exprStr);
+
+            Equation equation = new Equation();
+            for (Equation.EquationNode node : expr) {
+                equation.add(node);
+            }
+
+            BigFraction result = equation.evaluate();
+            assertEquals(exprStr, expectedValues.get(exprStr), result);
         }
-
-        BigFraction result = equation.evaluate();
-        assertEquals(BigFraction.valueOf(-27, 5), result);
     }
 }

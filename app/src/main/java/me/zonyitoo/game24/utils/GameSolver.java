@@ -43,7 +43,7 @@ public class GameSolver {
             }
         } while (nextPermutation(tmpCards));
 
-        Log.d(LOG_TAG, "Cannot found any solutions");
+        Log.d(LOG_TAG, "Cannot find any solutions");
 
         return false;
     }
@@ -77,17 +77,40 @@ public class GameSolver {
         }
     }
 
+    /**
+     * This is the main method for finding all possible solutions of the given card combination.
+     *
+     * Basic idea of the method is
+     *
+     * 1. If the expression is empty, the only value should be ZERO
+     * 2. If the expression contains only one operand, the value should equal to the operand
+     * 3. Otherwise, for every operators in the expression
+     *     1. Divide the expression from the operator
+     *     2. Calculate all the values of the left expression
+     *     3. Calculate all the values of the right expression
+     *     4. For every combinations of left values and right values, calculate all possible
+     *        values of the expression
+     *
+     * @param ops Operators
+     * @param cards Cards
+     * @param from begin index
+     * @param to end index
+     * @return possible values of the expression
+     */
     private static Set<BigFraction> enumerateAllSolution(List<Equation.EquationOperatorType> ops,
                                                     List<CardDealer.Card> cards,
                                                     int from, int to) {
         Set<BigFraction> results = new HashSet<BigFraction>();
         if (from == to) {
+            // Only one operand
             results.add(BigFraction.valueOf(cards.get(from).getNumber()));
             return results;
         } else if (from > to) {
+            // Empty expression
             results.add(BigFraction.ZERO);
             return results;
         } else if (from + 1 == to) {
+            // Two operands
             BigFraction r = evaluateValue(
                     BigFraction.valueOf(cards.get(from).getNumber()),
                     BigFraction.valueOf(cards.get(to).getNumber()),
@@ -98,7 +121,6 @@ public class GameSolver {
 
         for (int opidx = from; opidx < to; ++opidx) {
             // (...) op (...)
-            
             Set<BigFraction> leftResults = enumerateAllSolution(ops, cards, from, opidx);
             Set<BigFraction> rightResults = enumerateAllSolution(ops, cards, opidx + 1, to);
 
