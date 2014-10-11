@@ -1,8 +1,8 @@
 package me.zonyitoo.game24.utils;
 
-import java.util.Date;
-
 import android.content.Context;
+
+import java.util.Date;
 
 /**
  * Just a simple class for remembering the user's score. <br/>

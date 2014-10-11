@@ -1,5 +1,11 @@
 package me.zonyitoo.game24.utils;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
+
+import com.github.kiprobinson.util.BigFraction;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -7,12 +13,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Random;
-
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-
-import com.github.kiprobinson.util.BigFraction;
 
 import me.zonyitoo.game24.R;
 

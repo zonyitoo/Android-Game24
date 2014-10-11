@@ -1,14 +1,14 @@
 package me.zonyitoo.game24.utils;
 
+import android.util.Log;
+
+import com.github.kiprobinson.util.BigFraction;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import android.util.Log;
-
-import com.github.kiprobinson.util.BigFraction;
 
 /**
  * Created by zonyitoo on 14/10/10.

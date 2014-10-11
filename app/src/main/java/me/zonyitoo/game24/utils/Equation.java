@@ -1,10 +1,10 @@
 package me.zonyitoo.game24.utils;
 
+import com.github.kiprobinson.util.BigFraction;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Stack;
-
-import com.github.kiprobinson.util.BigFraction;
 
 /**
  * Created by zonyitoo on 14/10/7.
@@ -402,7 +402,7 @@ public class Equation {
         @Override
         public boolean equals(Object o) {
             if (o instanceof EquationOperand) {
-                return getData().equals(((EquationOperand) o).getData());
+                return getData().equals(((EquationOperand<?>) o).getData());
             }
             return false;
         }
