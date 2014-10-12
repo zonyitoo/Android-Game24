@@ -20,6 +20,13 @@ public class EquationTest extends AndroidTestCase {
 
     public static final String LOG_TAG = EquationTest.class.getSimpleName();
 
+    /**
+     * Parse an expression from String to <code>List&lt;Equation.EquationNode&gt;</code>
+     *
+     * @param input expression
+     * @return List of EquationNodes
+     * @throws Exception Parsing errors
+     */
     private List<Equation.EquationNode> parseExpression(String input) throws Exception {
         ArrayList<Equation.EquationNode> result = new ArrayList<Equation.EquationNode>();
 
@@ -111,14 +118,15 @@ public class EquationTest extends AndroidTestCase {
 
         HashMap<String, BigFraction> expectedValues = new HashMap<String, BigFraction>();
         expectedValues.put("1+2*(3-4)/5-6", BigFraction.valueOf(-27, 5));
-        expectedValues.put("1", BigFraction.valueOf(1));
+        expectedValues.put("1", BigFraction.ONE);
         expectedValues.put("1+1", BigFraction.valueOf(2));
         expectedValues.put("2*2", BigFraction.valueOf(4));
-        expectedValues.put("3-2", BigFraction.valueOf(1));
+        expectedValues.put("3-2", BigFraction.ONE);
         expectedValues.put("4/2", BigFraction.valueOf(2));
         expectedValues.put("1+2*3", BigFraction.valueOf(7));
         expectedValues.put("(1+2)*3", BigFraction.valueOf(9));
         expectedValues.put("1+2+3", BigFraction.valueOf(6));
+        expectedValues.put("", BigFraction.ZERO);
 
         for (String exprStr : expectedValues.keySet()) {
             List<Equation.EquationNode> expr = parseExpression(exprStr);
