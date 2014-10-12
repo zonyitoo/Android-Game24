@@ -127,17 +127,23 @@ public class EquationTest extends AndroidTestCase {
         expectedValues.put("(1+2)*3", BigFraction.valueOf(9));
         expectedValues.put("1+2+3", BigFraction.valueOf(6));
         expectedValues.put("", BigFraction.ZERO);
+        expectedValues.put("(((1)))", BigFraction.ONE);
 
         for (String exprStr : expectedValues.keySet()) {
             List<Equation.EquationNode> expr = parseExpression(exprStr);
 
-            Equation equation = new Equation();
-            for (Equation.EquationNode node : expr) {
-                equation.add(node);
-            }
+            Equation equation = new Equation(expr, 3);
 
             BigFraction result = equation.evaluate();
             assertEquals(exprStr, expectedValues.get(exprStr), result);
+        }
+
+        try {
+            List<Equation.EquationNode> wrongExpr = parseExpression("((((1234+1111))))");
+            Equation equation = new Equation(wrongExpr, 3);
+            assertTrue(false);
+        } catch (Equation.MalformedEquationException e) {
+
         }
     }
 }

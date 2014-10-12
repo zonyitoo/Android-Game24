@@ -4,6 +4,7 @@ import com.github.kiprobinson.util.BigFraction;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -38,6 +39,19 @@ public class Equation {
      */
     public Equation(int maxBracketLevel) {
         this.maxBracketLevel = maxBracketLevel;
+    }
+
+    public Equation(List<EquationNode> nodes) throws MalformedEquationException {
+        for (EquationNode node : nodes) {
+            add(node);
+        }
+    }
+
+    public Equation(List<EquationNode> nodes, int maxBracketLevel) throws MalformedEquationException {
+        this.maxBracketLevel = maxBracketLevel;
+        for (EquationNode node : nodes) {
+            add(node);
+        }
     }
 
     public void clear() {
