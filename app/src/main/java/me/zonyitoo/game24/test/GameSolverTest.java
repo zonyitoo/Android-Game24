@@ -111,30 +111,15 @@ public class GameSolverTest extends AndroidTestCase {
                 GameSolver.operatorProducts(GameSolver.AVAILABLE_OPERATORS, 3);
 
         Random random = new Random();
-        int[] pockerCards = new int[] {
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
-                1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
-            };
 
         CardDealer dealer = new CardDealer(getContext());
 
         Integer[] cards = new Integer[4];
         for (int cs = 0; cs < NUMBER_OF_TESTS; ++cs) {
-
-            int cidx;
-            do {
-                cidx = 0;
-                for (int i = 0; i < pockerCards.length && cidx < 4; ++i) {
-                    int randint = random.nextInt(pockerCards.length - i);
-                    if (randint < cards.length - cidx) {
-                        cards[cidx++] = pockerCards[i];
-                    }
-                }
-            } while (cidx != 4);
-
-            List<CardDealer.Card> clist = parseCards(dealer, cards);
+            List<CardDealer.Card> clist = dealer.sampleFourCardsWithoutValidation();
+            while (clist.size() != 4) {
+                clist = dealer.sampleFourCardsWithoutValidation();
+            }
             final Date beginTime = new Date();
             GameSolver.isSolutionExists(clist, opProducts, BigFraction.valueOf(24));
             final Date endTime = new Date();

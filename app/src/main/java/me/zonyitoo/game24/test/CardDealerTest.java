@@ -14,5 +14,7 @@ public class CardDealerTest extends AndroidTestCase {
     public void testDealingCards() throws Exception {
         CardDealer dealer = new CardDealer(this.getContext());
         List<CardDealer.Card> cards = dealer.deal();
+
+        assertEquals(4, cards.size());
     }
 }

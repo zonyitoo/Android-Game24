@@ -122,26 +122,28 @@ public class CardDealer {
      * @return 4 cards
      */
     public List<Card> deal() {
-        ArrayList<Card> c = new ArrayList<Card>();
-        Random r = new Random();
-
         final Date begTime = new Date();
-        do {
-
-            c.clear();
-
-            for (int i = 0; c.size() < 4 && i < cards.size(); ++i) {
-                int randint = r.nextInt(cards.size() - i);
-                if (randint < 4 - c.size()) {
-                    c.add(cards.get(i));
-                }
-            }
-
-        } while (!validateCardsCombination(c));
-
+        List<Card> c = sampleFourCardsWithoutValidation();
+        while (!validateCardsCombination(c)) {
+            c = sampleFourCardsWithoutValidation();
+        }
         final Date endTime = new Date();
         Log.d(LOG_TAG, "Spent " + (endTime.getTime() - begTime.getTime())
                 + "ms on dealing cards");
+
+        return c;
+    }
+
+    public List<Card> sampleFourCardsWithoutValidation() {
+        ArrayList<Card> c = new ArrayList<Card>();
+        Random r = new Random();
+
+        for (int i = 0; c.size() < 4 && i < cards.size(); ++i) {
+            int randint = r.nextInt(cards.size() - i);
+            if (randint < 4 - c.size()) {
+                c.add(cards.get(i));
+            }
+        }
 
         return c;
     }
@@ -152,7 +154,7 @@ public class CardDealer {
      * @param c 4 cards for validation
      * @return has solutions or not
      */
-    private boolean validateCardsCombination(ArrayList<Card> c) {
+    private boolean validateCardsCombination(List<Card> c) {
         if (c.size() != 4) {
             return false;
         }
