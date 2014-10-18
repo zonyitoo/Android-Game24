@@ -119,7 +119,21 @@ public class GameSolver {
             return results;
         }
 
+        boolean hasMetPlus = false, hasMetMultiply = false;
+
         for (int opidx = from; opidx < to; ++opidx) {
+            if (ops.get(opidx) == Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_PLUS) {
+                if (hasMetPlus) {
+                    continue;
+                }
+                hasMetPlus = true;
+            } else if (ops.get(opidx) == Equation.EquationOperatorType.EQUATION_OPERATOR_TYPE_MULTIPLY) {
+                if (hasMetMultiply) {
+                    continue;
+                }
+                hasMetMultiply = true;
+            }
+
             // (...) op (...)
             Set<BigFraction> leftResults = enumerateAllSolution(ops, cards, from, opidx);
             Set<BigFraction> rightResults = enumerateAllSolution(ops, cards, opidx + 1, to);
