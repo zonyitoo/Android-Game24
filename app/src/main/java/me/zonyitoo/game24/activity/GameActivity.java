@@ -190,16 +190,19 @@ public class GameActivity extends ActionBarActivity {
                     Log.d(LOG_TAG, "Equation " + equation.toString() + "=" + result);
 
                     if (result.equalsNumber(24)) {
-                        s += "=" + 24;
+                        s += "=24";
                         gameStatus = GameStatus.GAME_STATUS_WON;
+                        Toast.makeText(GameActivity.this, R.string.string_Game_Won_Game,
+                                Toast.LENGTH_LONG).show();
 
                         gameManager.endGame(GameManager.GameResult.GAME_RESULT_WON);
 
                         freezeTheWorld();
                         button_Evaluate.setEnabled(true);
                     } else {
-                        s = "<font color='red'>" + s + "\u2260" // A not-equal symbol
-                                + 24 + "</font>";
+                        s = "<font color='red'>" + s + "=" + result.toDecimalString(2) + "</font>";
+                        Toast.makeText(GameActivity.this, R.string.string_Game_Lost_Game,
+                                Toast.LENGTH_SHORT).show();
                         gameStatus = GameStatus.GAME_STATUS_LOST;
 
                         gameManager.endGame(GameManager.GameResult.GAME_RESULT_LOST);
