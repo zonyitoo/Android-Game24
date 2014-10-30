@@ -14,7 +14,7 @@
     <string name="string_Game_Bracket_Mismatch">Bracket mismatch</string>
     <string name="string_Game_Should_Use_All_Cards">You should use all cards</string>
     <string name="string_Game_Dealing_Cards">Dealing cards</string>
-    <string name="string_Game_Lost_Game">Lost!! You could try again or change the card set</string>
+    <string name="string_Game_Lost_Game">Lost!! Please try again :)</string>
     <string name="string_Game_Won_Game">Congratulate!!</string>
 
     <string name="string_ScoreBoard_label">Score board</string>

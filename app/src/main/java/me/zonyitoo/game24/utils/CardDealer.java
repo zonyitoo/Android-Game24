@@ -134,6 +134,17 @@ public class CardDealer {
         return c;
     }
 
+    public List<Card> dealTest() {
+        Card[] staticCardSet = new Card[] {
+                new Card(this, R.drawable.bordered_c_4, 4),
+                new Card(this, R.drawable.bordered_d_5, 5),
+                new Card(this, R.drawable.bordered_h_9, 9),
+                new Card(this, R.drawable.bordered_s_10, 10),
+        };
+
+        return Arrays.asList(staticCardSet);
+    }
+
     public List<Card> sampleFourCardsWithoutValidation() {
         ArrayList<Card> c = new ArrayList<Card>();
         Random r = new Random();

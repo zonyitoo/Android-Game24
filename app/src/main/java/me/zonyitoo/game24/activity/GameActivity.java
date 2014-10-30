@@ -2,6 +2,7 @@ package me.zonyitoo.game24.activity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IllegalFormatCodePointException;
 import java.util.List;
 import java.util.Random;
 
@@ -211,6 +212,15 @@ public class GameActivity extends ActionBarActivity {
                     textView_Equation.setText(Html.fromHtml(s));
                 } catch (Equation.MalformedEquationException e) {
                     Toast.makeText(GameActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(GameActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    String s = textView_Equation.getText().toString();
+                    textView_Equation.setText(Html.fromHtml("<font color='red'>" + s + "</font>"));
+
+                    gameStatus = GameStatus.GAME_STATUS_LOST;
+
+                    gameManager.endGame(GameManager.GameResult.GAME_RESULT_LOST);
+                    gameManager.startGame();
                 }
             }
         });
@@ -259,7 +269,7 @@ public class GameActivity extends ActionBarActivity {
     /**
      * Because of validating may be very time consuming, so I make it as a AsyncTask.
      */
-    class RestartAsyncTask extends AsyncTask<CardDealer, Void, List<CardDealer.Card>> {
+    class RestartAsyncTask extends AsyncTask<Object, Void, List<CardDealer.Card>> {
 
         ProgressDialog progressDialog;
 
@@ -278,8 +288,17 @@ public class GameActivity extends ActionBarActivity {
         }
 
         @Override
-        protected List<CardDealer.Card> doInBackground(CardDealer... cardDealers) {
-            return cardDealers[0].deal();
+        protected List<CardDealer.Card> doInBackground(Object... args)
+                throws IllegalFormatCodePointException {
+            if (args.length == 1)
+                return ((CardDealer) args[0]).deal();
+            else if (args.length == 2) {
+                Boolean isRandom = (Boolean) args[1];
+                CardDealer dealer = (CardDealer) args[0];
+                return isRandom ? dealer.deal() : dealer.dealTest();
+            } else {
+                throw new IllegalArgumentException("This task takes 1 or 2 arguments");
+            }
         }
 
         @SuppressWarnings("deprecation")
@@ -335,6 +354,12 @@ public class GameActivity extends ActionBarActivity {
         restartAsyncTask.execute(dealer);
     }
 
+    private void restartWithTest() {
+        gameManager.startGame();
+        RestartAsyncTask restartAsyncTask = new RestartAsyncTask();
+        restartAsyncTask.execute(dealer, false);
+    }
+
     private void refreshEquationView() {
         textView_Equation.setText(equation.toString());
     }
@@ -380,6 +405,9 @@ public class GameActivity extends ActionBarActivity {
             case R.id.menu_game_leader_board:
                 Intent intent = new Intent(this, ScoreBoardActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.menu_game_static_test:
+                restartWithTest();
                 break;
             default:
                 return super.onOptionsItemSelected(item);
