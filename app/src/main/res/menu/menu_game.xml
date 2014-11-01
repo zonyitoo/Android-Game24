@@ -9,13 +9,13 @@
         android:title="Test"/>
 
     <item android:id="@+id/menu_game_refresh"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         app:showAsAction="always"
         android:icon="@android:drawable/ic_menu_rotate"
         android:title="Restart"/>
 
     <item android:id="@+id/menu_game_leader_board"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         app:showAsAction="always"
         android:icon="@android:drawable/ic_menu_sort_by_size"
         android:title="Leader board"/>
